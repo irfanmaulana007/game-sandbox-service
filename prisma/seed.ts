@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import type { EquipmentType, MapDifficulty, MonsterRank, Rarity } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 import { prisma } from '../src/database/prisma';
 import type { SeederConfig } from './seed.config';
 import {
@@ -23,19 +24,42 @@ export class FakerSeeder {
       // Seed in order to maintain referential integrity
       await this.seedJobClasses();
       await this.seedExperienceLevels();
-      // await this.seedUsers();
+      await this.seedUsers();
       await this.seedMaps();
       await this.seedMonsters();
       await this.seedEquipment();
       await this.seedItems();
-      // await this.seedCharacters();
-      // await this.seedBattleLogs();
 
       console.log('🎉 All seeding completed successfully!');
     } catch (error) {
       console.error('❌ Seeding failed:', error);
       throw error;
     }
+  }
+
+  private async seedUsers(): Promise<void> {
+    console.log('📚 Seeding users...');
+
+    const users = [
+      {
+        username: 'irfanmaulana007',
+        email: 'game.irfanmaulana007@gmail.com',
+        password: 'asd123',
+      },
+    ];
+
+    for (const user of users) {
+      const passwordHash = await bcrypt.hash(user.password, 10);
+      await prisma.user.create({
+        data: {
+          username: user.username,
+          email: user.email,
+          password_hash: passwordHash,
+        },
+      });
+    }
+
+    console.log('✅ Successfully seeded users');
   }
 
   private async seedJobClasses(): Promise<void> {
@@ -271,18 +295,29 @@ export class FakerSeeder {
         max: 10,
       },
       normal: {
-        min: 5,
+        min: 10,
         max: 20,
       },
       hard: {
-        min: 15,
+        min: 20,
         max: 35,
       },
       extreme: {
-        min: 30,
-        max: 99,
+        min: 35,
+        max: 50,
       },
     };
+
+    await prisma.gameMap.create({
+      data: {
+        name: 'Mt. Kembar',
+        description: 'Mt. Kembar is a mountain in the mountains of Indonesia.',
+        min_level: 1,
+        max_level: 5,
+        difficulty: 'easy',
+        background_image: 'easy_bg_1.jpg',
+      },
+    });
 
     for (const mountain of mountains) {
       const difficulty = mountain.difficulty;
