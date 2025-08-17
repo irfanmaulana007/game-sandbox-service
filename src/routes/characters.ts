@@ -53,6 +53,32 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   }
 });
 
+// Get my character (single character for authenticated user)
+router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return sendUnauthorized(res, 'User not authenticated');
+    }
+
+    const character = await prisma.character.findFirst({
+      where: { userId: req.user.userId },
+      include: {
+        job: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!character) {
+      return sendNotFound(res, 'Character not found. Please create a character first.');
+    }
+
+    sendSuccess(res, character);
+  } catch (error) {
+    console.error('Get my character error:', error);
+    sendInternalError(res, 'Failed to retrieve character');
+  }
+});
+
 // Create new character
 router.post(
   '/',
