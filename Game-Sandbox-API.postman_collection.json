@@ -1,0 +1,1088 @@
+{
+  "info": {
+    "name": "Game Sandbox Backend API",
+    "description": "Complete API collection for the Game Sandbox RPG game backend service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "{{BASE_URL}}",
+      "type": "string"
+    },
+    {
+      "key": "AUTH_TOKEN",
+      "value": "{{AUTH_TOKEN}}",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{AUTH_TOKEN}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "description": "Server health and status endpoints",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/health",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Check server health status"
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "description": "User authentication and management",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/register",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Register a new user account"
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/login",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Login with username and password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Automatically set AUTH_TOKEN after successful login",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.success && responseJson.data && responseJson.data.token) {",
+                  "        pm.environment.set('AUTH_TOKEN', responseJson.data.token);",
+                  "        console.log('✅ AUTH_TOKEN automatically updated');",
+                  "    }",
+                  "} else {",
+                  "    console.log('❌ Login failed, AUTH_TOKEN not updated');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/me",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get current authenticated user information"
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/auth/logout",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Logout current user (client-side token removal)"
+        }
+      ]
+    },
+    {
+      "name": "Characters",
+      "description": "Character creation, management, and progression",
+      "item": [
+        {
+          "name": "Get All Characters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/characters",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "characters"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get all characters for the authenticated user"
+        },
+        {
+          "name": "Create Character",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hero\",\n  \"job_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/characters",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "characters"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Create a new character"
+        },
+        {
+          "name": "Get Character by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/characters/{{character_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "characters",
+                "{{character_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get character details by ID"
+        },
+        {
+          "name": "Update Character",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Hero\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/characters/{{character_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "characters",
+                "{{character_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Update character information"
+        },
+        {
+          "name": "Delete Character",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/characters/{{character_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "characters",
+                "{{character_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Delete a character"
+        },
+        {
+          "name": "Allocate Status Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"health_points\": 2,\n  \"attack_points\": 1,\n  \"defense_points\": 1,\n  \"speed_points\": 0,\n  \"critical_points\": 0\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/characters/{{character_id}}/allocate-stats",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "characters",
+                "{{character_id}}",
+                "allocate-stats"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Allocate status points to character stats"
+        }
+      ]
+    },
+    {
+      "name": "Equipment",
+      "description": "Equipment browsing and information",
+      "item": [
+        {
+          "name": "Get All Equipment",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/equipment?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "equipment"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get all equipment with pagination"
+        },
+        {
+          "name": "Get Equipment by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/equipment/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "equipment",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get equipment details by ID"
+        },
+        {
+          "name": "Get Equipment by Type",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/equipment/type/weapon?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "equipment",
+                "type",
+                "weapon"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get equipment filtered by type"
+        },
+        {
+          "name": "Get Equipment by Rarity",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/equipment/rarity/rare?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "equipment",
+                "rarity",
+                "rare"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get equipment filtered by rarity"
+        }
+      ]
+    },
+    {
+      "name": "Monsters",
+      "description": "Monster information and filtering",
+      "item": [
+        {
+          "name": "Get All Monsters",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/monsters?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "monsters"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get all monsters with pagination"
+        },
+        {
+          "name": "Get Monster by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/monsters/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "monsters",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get monster details by ID"
+        },
+        {
+          "name": "Get Monsters by Map",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/monsters/map/1?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "monsters",
+                "map",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get monsters by map ID"
+        },
+        {
+          "name": "Get Monsters by Rank",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/monsters/rank/elite?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "monsters",
+                "rank",
+                "elite"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get monsters by rank"
+        }
+      ]
+    },
+    {
+      "name": "Maps",
+      "description": "Game maps and area information",
+      "item": [
+        {
+          "name": "Get All Maps",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/maps?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "maps"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get all maps with pagination"
+        },
+        {
+          "name": "Get Map by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/maps/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "maps",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get map details by ID"
+        },
+        {
+          "name": "Get Maps by Difficulty",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/maps/difficulty/easy?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "maps",
+                "difficulty",
+                "easy"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get maps by difficulty level"
+        },
+        {
+          "name": "Get Maps by Level",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/maps/level/10?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "maps",
+                "level",
+                "10"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get maps suitable for character level"
+        }
+      ]
+    },
+    {
+      "name": "Battle",
+      "description": "Combat system and battle management",
+      "item": [
+        {
+          "name": "Start Battle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"character_id\": \"{{character_id}}\",\n  \"monster_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/battle/start",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "battle",
+                "start"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Start a battle between character and monster"
+        },
+        {
+          "name": "Get Battle by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/battle/{{battle_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "battle",
+                "{{battle_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get battle details by ID"
+        },
+        {
+          "name": "Get Character Battles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/battle/character/{{character_id}}?page=1&limit=20",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "battle",
+                "character",
+                "{{character_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get battle history for a character"
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "description": "Character inventory management",
+      "item": [
+        {
+          "name": "Get Character Inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/inventory/{{character_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "{{character_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get character's inventory items"
+        },
+        {
+          "name": "Add Item to Inventory",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemId\": 1,\n  \"quantity\": 5\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/inventory/{{character_id}}/items",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "{{character_id}}",
+                "items"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Add item to character inventory"
+        },
+        {
+          "name": "Update Item Quantity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 10\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/inventory/{{character_id}}/items/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "{{character_id}}",
+                "items",
+                "1"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Update item quantity in inventory"
+        },
+        {
+          "name": "Remove Item from Inventory",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/inventory/{{character_id}}/items/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "{{character_id}}",
+                "items",
+                "1"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Remove item from character inventory"
+        }
+      ]
+    }
+  ]
+}
