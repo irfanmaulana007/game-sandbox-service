@@ -109,7 +109,7 @@ router.post(
       return sendCreated(res, newCharacter, 'Character created successfully');
     } catch (error) {
       console.error('Create character error:', error);
-      return sendInternalError(res, 'Failed to create character');
+      sendInternalError(res, 'Failed to create character');
     }
   }
 );
