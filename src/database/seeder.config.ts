@@ -86,8 +86,8 @@ export interface SeederConfig {
 
 export const defaultSeederConfig: SeederConfig = {
   users: {
-    count: 50,
-    defaultPassword: 'password123',
+    count: 1,
+    defaultPassword: 'asd123',
   },
 
   characters: {

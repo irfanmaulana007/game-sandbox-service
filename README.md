@@ -70,7 +70,7 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 JWT_EXPIRES_IN=7d
 
 # Server Configuration
-PORT=3000
+PORT=8000
 NODE_ENV=development
 ```
 
@@ -95,7 +95,7 @@ npm run db:seed
 npm run dev
 ```
 
-The server will start on `http://localhost:3000`
+The server will start on `http://localhost:8000`
 
 ## 📚 Available Scripts
 
@@ -314,7 +314,7 @@ Ensure these are set in production:
 - `DATABASE_URL` - PostgreSQL connection string
 - `JWT_SECRET` - Strong secret for JWT signing
 - `NODE_ENV=production`
-- `PORT` - Server port (default: 3000)
+- `PORT` - Server port (default: 8000)
 
 ### Database
 

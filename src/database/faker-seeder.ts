@@ -27,8 +27,8 @@ export class FakerSeeder {
       await this.seedMonsters();
       await this.seedEquipment();
       await this.seedItems();
-      await this.seedCharacters();
-      await this.seedBattleLogs();
+      // await this.seedCharacters();
+      // await this.seedBattleLogs();
 
       console.log('🎉 All seeding completed successfully!');
     } catch (error) {
@@ -128,7 +128,8 @@ export class FakerSeeder {
     const passwordHash = await bcrypt.hash(this.config.users.defaultPassword, saltRounds);
 
     for (let i = 0; i < this.config.users.count; i++) {
-      const username = faker.internet.userName();
+      // const username = faker.internet.userName();
+      const username = 'irfanmaulana007';
       const email = faker.internet.email();
 
       await prisma.user.upsert({
@@ -488,122 +489,122 @@ export class FakerSeeder {
     }
   }
 
-  private async seedCharacters(): Promise<void> {
-    console.log(`👤 Seeding ${this.config.characters.count} characters...`);
+  // private async seedCharacters(): Promise<void> {
+  //   console.log(`👤 Seeding ${this.config.characters.count} characters...`);
 
-    // Get all users and job classes
-    const users = await prisma.user.findMany({ select: { id: true } });
-    const jobClasses = await prisma.jobClass.findMany({
-      select: {
-        id: true,
-        baseHealth: true,
-        baseAttack: true,
-        baseDefense: true,
-        baseSpeed: true,
-        baseCritical: true,
-        healthPerLevel: true,
-        attackPerLevel: true,
-        defensePerLevel: true,
-        speedPerLevel: true,
-        criticalPerLevel: true,
-      },
-    });
+  //   // Get all users and job classes
+  //   const users = await prisma.user.findMany({ select: { id: true } });
+  //   const jobClasses = await prisma.jobClass.findMany({
+  //     select: {
+  //       id: true,
+  //       baseHealth: true,
+  //       baseAttack: true,
+  //       baseDefense: true,
+  //       baseSpeed: true,
+  //       baseCritical: true,
+  //       healthPerLevel: true,
+  //       attackPerLevel: true,
+  //       defensePerLevel: true,
+  //       speedPerLevel: true,
+  //       criticalPerLevel: true,
+  //     },
+  //   });
 
-    if (users.length === 0 || jobClasses.length === 0) {
-      console.log('⚠️ No users or job classes found, skipping character creation');
+  //   if (users.length === 0 || jobClasses.length === 0) {
+  //     console.log('⚠️ No users or job classes found, skipping character creation');
 
-      return;
-    }
+  //     return;
+  //   }
 
-    for (let i = 0; i < this.config.characters.count; i++) {
-      const user = getRandomArrayItem(users);
-      const jobClass = getRandomArrayItem(jobClasses);
+  //   for (let i = 0; i < this.config.characters.count; i++) {
+  //     const user = getRandomArrayItem(users);
+  //     const jobClass = getRandomArrayItem(jobClasses);
 
-      // Generate character name
-      const firstName = faker.person.firstName();
-      const lastName = faker.person.lastName();
-      const name = `${firstName} ${lastName}`;
+  //     // Generate character name
+  //     const firstName = faker.person.firstName();
+  //     const lastName = faker.person.lastName();
+  //     const name = `${firstName} ${lastName}`;
 
-      const level = getRandomInRange(1, 50);
-      const experience = this.calculateExperienceForLevel(level);
+  //     const level = getRandomInRange(1, 50);
+  //     const experience = this.calculateExperienceForLevel(level);
 
-      // Calculate stats based on job class and level
-      const health = jobClass.baseHealth + jobClass.healthPerLevel * (level - 1);
-      const attack = jobClass.baseAttack + jobClass.attackPerLevel * (level - 1);
-      const defense = jobClass.baseDefense + jobClass.defensePerLevel * (level - 1);
-      const speed = jobClass.baseSpeed + jobClass.speedPerLevel * (level - 1);
-      const critical = jobClass.baseCritical + jobClass.criticalPerLevel * (level - 1);
+  //     // Calculate stats based on job class and level
+  //     const health = jobClass.baseHealth + jobClass.healthPerLevel * (level - 1);
+  //     const attack = jobClass.baseAttack + jobClass.attackPerLevel * (level - 1);
+  //     const defense = jobClass.baseDefense + jobClass.defensePerLevel * (level - 1);
+  //     const speed = jobClass.baseSpeed + jobClass.speedPerLevel * (level - 1);
+  //     const critical = jobClass.baseCritical + jobClass.criticalPerLevel * (level - 1);
 
-      const statusPoints = Math.floor(level * 0.5); // Some characters have unallocated points
-      const gold = getRandomInRange(0, level * 100);
+  //     const statusPoints = Math.floor(level * 0.5); // Some characters have unallocated points
+  //     const gold = getRandomInRange(0, level * 100);
 
-      await prisma.character.create({
-        data: {
-          userId: user.id,
-          name,
-          jobId: jobClass.id,
-          level,
-          experience,
-          health,
-          maxHealth: health,
-          attack,
-          defense,
-          speed,
-          critical,
-          statusPoints,
-          gold,
-        },
-      });
-    }
-  }
+  //     await prisma.character.create({
+  //       data: {
+  //         userId: user.id,
+  //         name,
+  //         jobId: jobClass.id,
+  //         level,
+  //         experience,
+  //         health,
+  //         maxHealth: health,
+  //         attack,
+  //         defense,
+  //         speed,
+  //         critical,
+  //         statusPoints,
+  //         gold,
+  //       },
+  //     });
+  //   }
+  // }
 
-  private async seedBattleLogs(): Promise<void> {
-    console.log(`⚔️ Seeding ${this.config.battleLogs.count} battle logs...`);
+  // private async seedBattleLogs(): Promise<void> {
+  //   console.log(`⚔️ Seeding ${this.config.battleLogs.count} battle logs...`);
 
-    // Get all characters and monsters
-    const characters = await prisma.character.findMany({ select: { id: true } });
-    const monsters = await prisma.monster.findMany({ select: { id: true } });
+  //   // Get all characters and monsters
+  //   const characters = await prisma.character.findMany({ select: { id: true } });
+  //   const monsters = await prisma.monster.findMany({ select: { id: true } });
 
-    if (characters.length === 0 || monsters.length === 0) {
-      console.log('⚠️ No characters or monsters found, skipping battle log creation');
+  //   if (characters.length === 0 || monsters.length === 0) {
+  //     console.log('⚠️ No characters or monsters found, skipping battle log creation');
 
-      return;
-    }
+  //     return;
+  //   }
 
-    for (let i = 0; i < this.config.battleLogs.count; i++) {
-      const character = getRandomArrayItem(characters);
-      const monster = getRandomArrayItem(monsters);
+  //   for (let i = 0; i < this.config.battleLogs.count; i++) {
+  //     const character = getRandomArrayItem(characters);
+  //     const monster = getRandomArrayItem(monsters);
 
-      const battleResult = Math.random() > 0.3 ? 'victory' : 'defeat'; // 70% victory rate
-      const turnsTaken = getRandomInRange(1, 20);
-      const experienceGained = getRandomInRange(10, 200);
-      const goldGained = getRandomInRange(5, 100);
+  //     const battleResult = Math.random() > 0.3 ? 'victory' : 'defeat'; // 70% victory rate
+  //     const turnsTaken = getRandomInRange(1, 20);
+  //     const experienceGained = getRandomInRange(10, 200);
+  //     const goldGained = getRandomInRange(5, 100);
 
-      // Generate random health remaining
-      const characterHealthRemaining = battleResult === 'victory' ? getRandomInRange(1, 100) : 0;
-      const monsterHealthRemaining = battleResult === 'victory' ? 0 : getRandomInRange(1, 100);
+  //     // Generate random health remaining
+  //     const characterHealthRemaining = battleResult === 'victory' ? getRandomInRange(1, 100) : 0;
+  //     const monsterHealthRemaining = battleResult === 'victory' ? 0 : getRandomInRange(1, 100);
 
-      // Generate random battle date within the specified range
-      const battleDate = faker.date.between({
-        from: this.config.battleLogs.dateRange.start,
-        to: this.config.battleLogs.dateRange.end,
-      });
+  //     // Generate random battle date within the specified range
+  //     const battleDate = faker.date.between({
+  //       from: this.config.battleLogs.dateRange.start,
+  //       to: this.config.battleLogs.dateRange.end,
+  //     });
 
-      await prisma.battleLog.create({
-        data: {
-          characterId: character.id,
-          monsterId: monster.id,
-          battleResult: battleResult as 'victory' | 'defeat',
-          characterHealthRemaining,
-          monsterHealthRemaining,
-          turnsTaken,
-          experienceGained,
-          goldGained,
-          battleDate,
-        },
-      });
-    }
-  }
+  //     await prisma.battleLog.create({
+  //       data: {
+  //         characterId: character.id,
+  //         monsterId: monster.id,
+  //         battleResult: battleResult as 'victory' | 'defeat',
+  //         characterHealthRemaining,
+  //         monsterHealthRemaining,
+  //         turnsTaken,
+  //         experienceGained,
+  //         goldGained,
+  //         battleDate,
+  //       },
+  //     });
+  //   }
+  // }
 
   private generateDropTable(rank: string): any {
     const dropRates = {

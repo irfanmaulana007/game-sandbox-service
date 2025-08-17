@@ -224,10 +224,11 @@ export interface JwtPayload {
   userId: string;
   username: string;
   iat: number;
-  exp: number;
+  exp?: number;
 }
 
-export interface AuthenticatedRequest extends Request {
+// export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest {
   user?: JwtPayload;
 }
 

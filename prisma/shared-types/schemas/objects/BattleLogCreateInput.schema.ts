@@ -1,0 +1,30 @@
+import { z } from 'zod';
+import type { Prisma } from '@prisma/client';
+import { BattleResultSchema } from '../enums/BattleResult.schema';
+import { CharacterCreateNestedOneWithoutBattleLogsInputObjectSchema } from './CharacterCreateNestedOneWithoutBattleLogsInput.schema';
+import { MonsterCreateNestedOneWithoutBattleLogsInputObjectSchema } from './MonsterCreateNestedOneWithoutBattleLogsInput.schema'
+
+export const BattleLogCreateInputObjectSchema: z.ZodType<Prisma.BattleLogCreateInput, Prisma.BattleLogCreateInput> = z.object({
+  id: z.string().optional(),
+  battleResult: BattleResultSchema,
+  characterHealthRemaining: z.number().int(),
+  monsterHealthRemaining: z.number().int(),
+  turnsTaken: z.number().int(),
+  experienceGained: z.number().int(),
+  goldGained: z.number().int(),
+  battleDate: z.date().optional(),
+  character: z.lazy(() => CharacterCreateNestedOneWithoutBattleLogsInputObjectSchema),
+  monster: z.lazy(() => MonsterCreateNestedOneWithoutBattleLogsInputObjectSchema)
+}).strict();
+export const BattleLogCreateInputObjectZodSchema = z.object({
+  id: z.string().optional(),
+  battleResult: BattleResultSchema,
+  characterHealthRemaining: z.number().int(),
+  monsterHealthRemaining: z.number().int(),
+  turnsTaken: z.number().int(),
+  experienceGained: z.number().int(),
+  goldGained: z.number().int(),
+  battleDate: z.date().optional(),
+  character: z.lazy(() => CharacterCreateNestedOneWithoutBattleLogsInputObjectSchema),
+  monster: z.lazy(() => MonsterCreateNestedOneWithoutBattleLogsInputObjectSchema)
+}).strict();

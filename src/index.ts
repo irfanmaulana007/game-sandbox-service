@@ -21,7 +21,7 @@ import { connectDatabase } from './database/prisma';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
 // Security middleware
 app.use(helmet());
@@ -81,7 +81,7 @@ app.use('*', (req, res) => {
 });
 
 // Global error handler
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response) => {
   console.error('Global error handler:', err);
   res.status(500).json({
     error: 'Internal server error',

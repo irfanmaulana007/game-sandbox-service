@@ -104,7 +104,6 @@ router.post('/login', async (req: Request, res: Response) => {
       userId: userData.id,
       username: userData.username,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
     };
 
     const token = jwt.sign(payload, secret, {

@@ -1,0 +1,33 @@
+{
+  "name": "@game-sandbox/types",
+  "version": "1.0.0",
+  "description": "Shared Prisma + Zod types for Game Sandbox",
+  "main": "index.ts",
+  "types": "index.ts",
+  "files": [
+    "schemas",
+    "helpers",
+    "index.ts"
+  ],
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "types",
+    "prisma",
+    "zod",
+    "game",
+    "rpg"
+  ],
+  "author": "Irfan Maulana",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irfanmaulana007/game-sandbox-service.git"
+  },
+  "bugs": {
+    "url": "https://github.com/irfanmaulana007/game-sandbox-service/issues"
+  },
+  "homepage": "https://github.com/irfanmaulana007/game-sandbox-service#readme"
+}

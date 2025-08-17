@@ -44,38 +44,43 @@ The collection includes **automatic token management**:
 ## 🚀 Getting Started
 
 ### 1. Health Check
+
 - Start with "Health Check" to verify server is running
 
 ### 2. User Registration
+
 - Use "Register User" to create a test account
 
 ### 3. User Login
+
 - Use "Login User" with your credentials
 - Token is automatically saved
 
 ### 4. Create Character
+
 - Use "Create Character" to make your first character
 - Note the character ID for other requests
 
 ### 5. Explore Other Endpoints
+
 - All endpoints are organized by category
 - Use the character ID from step 4 in other requests
 
 ## 🔧 Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `BASE_URL` | API base URL | `http://localhost:3000` |
+| Variable     | Description              | Example                   |
+| ------------ | ------------------------ | ------------------------- |
+| `BASE_URL`   | API base URL             | `http://localhost:8000`   |
 | `AUTH_TOKEN` | JWT authentication token | `eyJhbGciOiJIUzI1NiIs...` |
 
 ## 📝 Request Variables
 
 Some requests use **dynamic variables** that you need to set:
 
-| Variable | Description | How to Set |
-|----------|-------------|-------------|
+| Variable           | Description    | How to Set                            |
+| ------------------ | -------------- | ------------------------------------- |
 | `{{character_id}}` | Character UUID | Copy from character creation response |
-| `{{battle_id}}` | Battle UUID | Copy from battle start response |
+| `{{battle_id}}`    | Battle UUID    | Copy from battle start response       |
 
 ## 🎯 Tips for Testing
 
