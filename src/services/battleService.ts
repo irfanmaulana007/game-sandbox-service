@@ -22,7 +22,7 @@ export class BattleService {
     }
 
     // Check if character belongs to user
-    if (character.userId !== userId) {
+    if (character.user_id !== userId) {
       throw new Error('Character does not belong to user');
     }
 
@@ -32,14 +32,14 @@ export class BattleService {
     // Create battle log
     const battleLog = await prisma.battleLog.create({
       data: {
-        characterId: character_id,
-        monsterId: monster_id,
+        character_id,
+        monster_id,
         battleResult: battleResult.result,
-        characterHealthRemaining: battleResult.characterHealthRemaining,
-        monsterHealthRemaining: battleResult.monsterHealthRemaining,
-        turnsTaken: battleResult.turnsTaken,
-        experienceGained: battleResult.experienceGained,
-        goldGained: battleResult.goldGained,
+        character_health_remaining: battleResult.characterHealthRemaining,
+        monster_health_remaining: battleResult.monsterHealthRemaining,
+        turns_taken: battleResult.turnsTaken,
+        experience_gained: battleResult.experienceGained,
+        gold_gained: battleResult.goldGained,
       },
     });
 
@@ -81,7 +81,7 @@ export class BattleService {
     }
 
     // Check if battle belongs to user
-    if (battleLog.character.userId !== userId) {
+    if (battleLog.character.user_id !== userId) {
       throw new Error('Battle does not belong to user');
     }
 
@@ -98,7 +98,7 @@ export class BattleService {
       throw new Error('Character not found');
     }
 
-    if (character.userId !== userId) {
+    if (character.user_id !== userId) {
       throw new Error('Character does not belong to user');
     }
 
@@ -106,7 +106,7 @@ export class BattleService {
 
     const [battles, total] = await Promise.all([
       prisma.battleLog.findMany({
-        where: { characterId },
+        where: { character_id: characterId },
         include: {
           monster: {
             include: { details: true },
@@ -114,9 +114,9 @@ export class BattleService {
         },
         skip,
         take: limit,
-        orderBy: { battleDate: 'desc' },
+        orderBy: { battle_date: 'desc' },
       }),
-      prisma.battleLog.count({ where: { characterId } }),
+      prisma.battleLog.count({ where: { character_id: characterId } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);

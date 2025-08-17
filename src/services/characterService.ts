@@ -7,14 +7,14 @@ export class CharacterService {
 
     const [total, characters] = await Promise.all([
       prisma.character.count({
-        where: { userId },
+        where: { user_id: userId },
       }),
       prisma.character.findMany({
-        where: { userId },
+        where: { user_id: userId },
         include: {
           job: true,
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         skip,
         take: limit,
       }),
@@ -25,11 +25,11 @@ export class CharacterService {
 
   async getCharacterByUserId(userId: string) {
     const character = await prisma.character.findFirst({
-      where: { userId },
+      where: { user_id: userId },
       include: {
         job: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { created_at: 'desc' },
     });
 
     if (!character) {
@@ -54,7 +54,7 @@ export class CharacterService {
     // Check if character name already exists for this user
     const existingCharacter = await prisma.character.findFirst({
       where: {
-        userId,
+        user_id: userId,
         name,
       },
     });
@@ -66,18 +66,18 @@ export class CharacterService {
     // Create character with base stats
     const newCharacter = await prisma.character.create({
       data: {
-        userId,
+        user_id: userId,
         name,
-        jobId: job_id,
+        job_id,
         level: 1,
         experience: 0,
-        health: job.baseHealth,
-        maxHealth: job.baseHealth,
-        attack: job.baseAttack,
-        defense: job.baseDefense,
-        speed: job.baseSpeed,
-        critical: job.baseCritical,
-        statusPoints: 0,
+        health: job.base_health,
+        max_health: job.base_health,
+        attack: job.base_attack,
+        defense: job.base_defense,
+        speed: job.base_speed,
+        critical: job.base_critical,
+        status_points: 0,
         gold: 0,
       },
     });
@@ -89,7 +89,7 @@ export class CharacterService {
     const character = await prisma.character.findFirst({
       where: {
         id,
-        userId,
+        user_id: userId,
       },
       include: {
         job: true,
@@ -108,7 +108,7 @@ export class CharacterService {
     const existingCharacter = await prisma.character.findFirst({
       where: {
         id,
-        userId,
+        user_id: userId,
       },
     });
 
@@ -130,7 +130,7 @@ export class CharacterService {
     const existingCharacter = await prisma.character.findFirst({
       where: {
         id,
-        userId,
+        user_id: userId,
       },
     });
 
@@ -153,7 +153,7 @@ export class CharacterService {
     const char = await prisma.character.findFirst({
       where: {
         id,
-        userId,
+        user_id: userId,
       },
     });
 
@@ -164,7 +164,7 @@ export class CharacterService {
     const totalPoints =
       health_points + attack_points + defense_points + speed_points + critical_points;
 
-    if (totalPoints > char.statusPoints) {
+    if (totalPoints > char.status_points) {
       throw new Error('Not enough status points available');
     }
 
@@ -173,12 +173,12 @@ export class CharacterService {
       where: { id },
       data: {
         health: { increment: health_points * 10 },
-        maxHealth: { increment: health_points * 10 },
+        max_health: { increment: health_points * 10 },
         attack: { increment: attack_points },
         defense: { increment: defense_points },
         speed: { increment: speed_points },
         critical: { increment: critical_points },
-        statusPoints: { decrement: totalPoints },
+        status_points: { decrement: totalPoints },
       },
     });
 

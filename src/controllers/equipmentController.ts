@@ -1,7 +1,12 @@
 import type { EquipmentType, Rarity } from '@prisma/client';
 import { type Request, type Response } from 'express';
 import { EquipmentService } from '~/services/equipmentService';
-import { sendInternalError, sendNotFound, sendSuccess } from '~/utils/response';
+import {
+  sendInternalError,
+  sendNotFound,
+  sendSuccess,
+  sendSuccessWithPagination,
+} from '~/utils/response';
 
 export class EquipmentController {
   private equipmentService: EquipmentService;
@@ -21,7 +26,7 @@ export class EquipmentController {
       const filters = { type, rarity, minLevel };
       const result = await this.equipmentService.getEquipment(page, limit, filters);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.equipment, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get equipment error:', error);
 
@@ -54,7 +59,7 @@ export class EquipmentController {
 
       const result = await this.equipmentService.getEquipmentByType(type, page, limit);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.equipment, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get equipment by type error:', error);
 
@@ -70,7 +75,7 @@ export class EquipmentController {
 
       const result = await this.equipmentService.getEquipmentByRarity(rarity, page, limit);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.equipment, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get equipment by rarity error:', error);
 

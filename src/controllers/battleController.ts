@@ -6,6 +6,7 @@ import {
   sendInternalError,
   sendNotFound,
   sendSuccess,
+  sendSuccessWithPagination,
   sendUnauthorized,
 } from '~/utils/response';
 
@@ -89,7 +90,7 @@ export class BattleController {
         limit
       );
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.battles, result.pagination.total, page, limit);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'Character not found') {

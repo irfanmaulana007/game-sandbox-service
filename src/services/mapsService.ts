@@ -11,8 +11,8 @@ export class MapsService {
     const where: Prisma.GameMapWhereInput = {};
 
     if (filters.difficulty) where.difficulty = filters.difficulty;
-    if (filters.minLevel) where.minLevel = { gte: filters.minLevel };
-    if (filters.maxLevel) where.maxLevel = { lte: filters.maxLevel };
+    if (filters.minLevel) where.min_level = { gte: filters.minLevel };
+    if (filters.maxLevel) where.max_level = { lte: filters.maxLevel };
 
     const [maps, total] = await Promise.all([
       prisma.gameMap.findMany({
@@ -24,7 +24,7 @@ export class MapsService {
         },
         skip,
         take: limit,
-        orderBy: { minLevel: 'asc' },
+        orderBy: { min_level: 'asc' },
       }),
       prisma.gameMap.count({ where }),
     ]);
@@ -75,7 +75,7 @@ export class MapsService {
         },
         skip,
         take: limit,
-        orderBy: { minLevel: 'asc' },
+        orderBy: { min_level: 'asc' },
       }),
       prisma.gameMap.count({ where: { difficulty } }),
     ]);
@@ -99,8 +99,8 @@ export class MapsService {
     const [maps, total] = await Promise.all([
       prisma.gameMap.findMany({
         where: {
-          minLevel: { lte: minLevel },
-          maxLevel: { gte: minLevel },
+          min_level: { lte: minLevel },
+          max_level: { gte: minLevel },
         },
         include: {
           _count: {
@@ -109,12 +109,12 @@ export class MapsService {
         },
         skip,
         take: limit,
-        orderBy: { minLevel: 'asc' },
+        orderBy: { min_level: 'asc' },
       }),
       prisma.gameMap.count({
         where: {
-          minLevel: { lte: minLevel },
-          maxLevel: { gte: minLevel },
+          min_level: { lte: minLevel },
+          max_level: { gte: minLevel },
         },
       }),
     ]);

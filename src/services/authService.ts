@@ -27,13 +27,13 @@ export class AuthService {
       data: {
         username,
         email,
-        passwordHash,
+        password_hash: passwordHash,
       },
       select: {
         id: true,
         username: true,
         email: true,
-        createdAt: true,
+        created_at: true,
       },
     });
 
@@ -50,7 +50,7 @@ export class AuthService {
         id: true,
         username: true,
         email: true,
-        passwordHash: true,
+        password_hash: true,
       },
     });
 
@@ -59,7 +59,7 @@ export class AuthService {
     }
 
     // Verify password
-    const isValidPassword = await bcrypt.compare(password, userData.passwordHash);
+    const isValidPassword = await bcrypt.compare(password, userData.password_hash);
 
     if (!isValidPassword) {
       throw new Error('Invalid credentials');
@@ -99,7 +99,7 @@ export class AuthService {
         id: true,
         username: true,
         email: true,
-        createdAt: true,
+        created_at: true,
       },
     });
 

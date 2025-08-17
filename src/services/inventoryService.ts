@@ -11,16 +11,16 @@ export class InventoryService {
       throw new Error('Character not found');
     }
 
-    if (character.userId !== userId) {
+    if (character.user_id !== userId) {
       throw new Error('Character does not belong to user');
     }
 
     const inventory = await prisma.characterInventory.findMany({
-      where: { characterId },
+      where: { character_id: characterId },
       include: {
         item: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { created_at: 'desc' },
     });
 
     return inventory;
@@ -41,7 +41,7 @@ export class InventoryService {
       throw new Error('Character not found');
     }
 
-    if (character.userId !== userId) {
+    if (character.user_id !== userId) {
       throw new Error('Character does not belong to user');
     }
 
@@ -57,8 +57,8 @@ export class InventoryService {
     // Check if item already exists in inventory
     const existingItem = await prisma.characterInventory.findFirst({
       where: {
-        characterId,
-        itemId: Number(itemId),
+        character_id: characterId,
+        item_id: Number(itemId),
       },
     });
 
@@ -79,8 +79,8 @@ export class InventoryService {
       // Add new item
       const newItem = await prisma.characterInventory.create({
         data: {
-          characterId,
-          itemId: Number(itemId),
+          character_id: characterId,
+          item_id: Number(itemId),
           quantity,
         },
         include: { item: true },
@@ -104,15 +104,15 @@ export class InventoryService {
       throw new Error('Character not found');
     }
 
-    if (character.userId !== userId) {
+    if (character.user_id !== userId) {
       throw new Error('Character does not belong to user');
     }
 
-    // Find inventory item
+    // Check if item exists in inventory
     const inventoryItem = await prisma.characterInventory.findFirst({
       where: {
-        characterId,
-        itemId: Number(itemId),
+        character_id: characterId,
+        item_id: Number(itemId),
       },
     });
 
@@ -121,14 +121,14 @@ export class InventoryService {
     }
 
     if (quantity <= 0) {
-      // Remove item if quantity is 0 or negative
+      // Remove item from inventory
       await prisma.characterInventory.delete({
         where: { id: inventoryItem.id },
       });
 
       return {
-        message: 'Item removed from inventory',
         removed: true,
+        message: 'Item removed from inventory',
       };
     } else {
       // Update quantity
@@ -156,15 +156,15 @@ export class InventoryService {
       throw new Error('Character not found');
     }
 
-    if (character.userId !== userId) {
+    if (character.user_id !== userId) {
       throw new Error('Character does not belong to user');
     }
 
-    // Find and delete inventory item
+    // Check if item exists in inventory
     const inventoryItem = await prisma.characterInventory.findFirst({
       where: {
-        characterId,
-        itemId: Number(itemId),
+        character_id: characterId,
+        item_id: Number(itemId),
       },
     });
 
@@ -172,10 +172,13 @@ export class InventoryService {
       throw new Error('Item not found in inventory');
     }
 
+    // Remove item from inventory
     await prisma.characterInventory.delete({
       where: { id: inventoryItem.id },
     });
 
-    return true;
+    return {
+      message: 'Item removed from inventory',
+    };
   }
 }

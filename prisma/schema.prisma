@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  username      String   @unique
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   // Relations
   characters Character[]
@@ -25,19 +25,19 @@ model User {
 }
 
 model JobClass {
-  id               Int     @id @default(autoincrement())
-  name             String  @unique
-  description      String?
-  baseHealth       Int     @map("base_health")
-  baseAttack       Int     @map("base_attack")
-  baseDefense      Int     @map("base_defense")
-  baseSpeed        Int     @map("base_speed")
-  baseCritical     Int     @map("base_critical")
-  healthPerLevel   Int     @default(10) @map("health_per_level")
-  attackPerLevel   Int     @default(1) @map("attack_per_level")
-  defensePerLevel  Int     @default(1) @map("defense_per_level")
-  speedPerLevel    Int     @default(1) @map("speed_per_level")
-  criticalPerLevel Int     @default(1) @map("critical_per_level")
+  id                 Int     @id @default(autoincrement())
+  name               String  @unique
+  description        String?
+  base_health        Int
+  base_attack        Int
+  base_defense       Int
+  base_speed         Int
+  base_critical      Int
+  health_per_level   Int     @default(10)
+  attack_per_level   Int     @default(1)
+  defense_per_level  Int     @default(1)
+  speed_per_level    Int     @default(1)
+  critical_per_level Int     @default(1)
 
   // Relations
   characters Character[]
@@ -46,48 +46,48 @@ model JobClass {
 }
 
 model Character {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")
-  name         String
-  jobId        Int      @map("job_id")
-  level        Int      @default(1)
-  experience   Int      @default(0)
-  health       Int
-  maxHealth    Int      @map("max_health")
-  attack       Int
-  defense      Int
-  speed        Int
-  critical     Int
-  statusPoints Int      @default(0) @map("status_points")
-  gold         Int      @default(0)
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  user_id       String
+  name          String
+  job_id        Int
+  level         Int      @default(1)
+  experience    Int      @default(0)
+  health        Int
+  max_health    Int
+  attack        Int
+  defense       Int
+  speed         Int
+  critical      Int
+  status_points Int      @default(0)
+  gold          Int      @default(0)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   // Relations
-  user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  job        JobClass             @relation(fields: [jobId], references: [id])
+  user       User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  job        JobClass             @relation(fields: [job_id], references: [id])
   equipment  CharacterEquipment[]
   inventory  CharacterInventory[]
   battleLogs BattleLog[]
 
-  @@unique([userId, name])
+  @@unique([user_id, name])
   @@map("characters")
 }
 
 model Equipment {
-  id            Int           @id @default(autoincrement())
-  name          String
-  type          EquipmentType
-  rarity        Rarity
-  minLevel      Int           @default(1) @map("min_level")
-  healthBonus   Int           @default(0) @map("health_bonus")
-  attackBonus   Int           @default(0) @map("attack_bonus")
-  defenseBonus  Int           @default(0) @map("defense_bonus")
-  speedBonus    Int           @default(0) @map("speed_bonus")
-  criticalBonus Int           @default(0) @map("critical_bonus")
-  description   String?
-  dropRate      Decimal       @default(0.0100) @map("drop_rate") @db.Decimal(5, 4)
-  createdAt     DateTime      @default(now()) @map("created_at")
+  id             Int           @id @default(autoincrement())
+  name           String
+  type           EquipmentType
+  rarity         Rarity
+  min_level      Int           @default(1)
+  health_bonus   Int           @default(0)
+  attack_bonus   Int           @default(0)
+  defense_bonus  Int           @default(0)
+  speed_bonus    Int           @default(0)
+  critical_bonus Int           @default(0)
+  description    String?
+  drop_rate      Decimal       @default(0.0100) @db.Decimal(5, 4)
+  created_at     DateTime      @default(now())
 
   // Relations
   characterEquipment CharacterEquipment[]
@@ -96,28 +96,28 @@ model Equipment {
 }
 
 model CharacterEquipment {
-  id          String        @id @default(cuid())
-  characterId String        @map("character_id")
-  equipmentId Int           @map("equipment_id")
-  slot        EquipmentSlot
-  equippedAt  DateTime      @default(now()) @map("equipped_at")
+  id           String        @id @default(cuid())
+  character_id String
+  equipment_id Int
+  slot         EquipmentSlot
+  equipped_at  DateTime      @default(now())
 
   // Relations
-  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  equipment Equipment @relation(fields: [equipmentId], references: [id])
+  character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipment_id], references: [id])
 
   @@map("character_equipment")
 }
 
 model Item {
-  id          Int      @id @default(autoincrement())
-  name        String
-  type        String
-  description String?
-  effectValue Int?     @map("effect_value")
-  rarity      Rarity
-  dropRate    Decimal  @default(0.0100) @map("drop_rate") @db.Decimal(5, 4)
-  createdAt   DateTime @default(now()) @map("created_at")
+  id           Int      @id @default(autoincrement())
+  name         String
+  type         String
+  description  String?
+  effect_value Int?
+  rarity       Rarity
+  drop_rate    Decimal  @default(0.0100) @db.Decimal(5, 4)
+  created_at   DateTime @default(now())
 
   // Relations
   characterInventory CharacterInventory[]
@@ -126,28 +126,28 @@ model Item {
 }
 
 model CharacterInventory {
-  id          String   @id @default(cuid())
-  characterId String   @map("character_id")
-  itemId      Int      @map("item_id")
-  quantity    Int      @default(1)
-  createdAt   DateTime @default(now()) @map("created_at")
+  id           String   @id @default(cuid())
+  character_id String
+  item_id      Int
+  quantity     Int      @default(1)
+  created_at   DateTime @default(now())
 
   // Relations
-  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  item      Item      @relation(fields: [itemId], references: [id])
+  character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  item      Item      @relation(fields: [item_id], references: [id])
 
   @@map("character_inventory")
 }
 
 model GameMap {
-  id              Int           @id @default(autoincrement())
-  name            String
-  description     String?
-  minLevel        Int           @default(1) @map("min_level")
-  maxLevel        Int           @default(99) @map("max_level")
-  difficulty      MapDifficulty
-  backgroundImage String?       @map("background_image")
-  createdAt       DateTime      @default(now()) @map("created_at")
+  id               Int           @id @default(autoincrement())
+  name             String
+  description      String?
+  min_level        Int           @default(1)
+  max_level        Int           @default(99)
+  difficulty       MapDifficulty
+  background_image String?
+  created_at       DateTime      @default(now())
 
   // Relations
   monsters Monster[]
@@ -156,21 +156,21 @@ model GameMap {
 }
 
 model Monster {
-  id               Int      @id @default(autoincrement())
-  name             String
-  level            Int      @default(1)
-  health           Int
-  attack           Int
-  defense          Int
-  speed            Int
-  critical         Int
-  experienceReward Int      @default(0) @map("experience_reward")
-  goldReward       Int      @default(0) @map("gold_reward")
-  mapId            Int?     @map("map_id")
-  createdAt        DateTime @default(now()) @map("created_at")
+  id                Int      @id @default(autoincrement())
+  name              String
+  level             Int      @default(1)
+  health            Int
+  attack            Int
+  defense           Int
+  speed             Int
+  critical          Int
+  experience_reward Int      @default(0)
+  gold_reward       Int      @default(0)
+  map_id            Int?
+  created_at        DateTime @default(now())
 
   // Relations
-  map        GameMap?        @relation(fields: [mapId], references: [id])
+  map        GameMap?        @relation(fields: [map_id], references: [id])
   details    MonsterDetails?
   battleLogs BattleLog[]
 
@@ -179,34 +179,34 @@ model Monster {
 
 model MonsterDetails {
   id          Int         @id @default(autoincrement())
-  monsterId   Int         @unique @map("monster_id")
+  monster_id  Int         @unique
   rank        MonsterRank
   description String?
-  imageUrl    String?     @map("image_url")
-  dropTable   Json?       @map("drop_table")
-  createdAt   DateTime    @default(now()) @map("created_at")
+  image_url   String?
+  drop_table  Json?
+  created_at  DateTime    @default(now())
 
   // Relations
-  monster Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+  monster Monster @relation(fields: [monster_id], references: [id], onDelete: Cascade)
 
   @@map("monster_details")
 }
 
 model BattleLog {
-  id                       String       @id @default(cuid())
-  characterId              String       @map("character_id")
-  monsterId                Int          @map("monster_id")
-  battleResult             BattleResult
-  characterHealthRemaining Int          @map("character_health_remaining")
-  monsterHealthRemaining   Int          @map("monster_health_remaining")
-  turnsTaken               Int          @map("turns_taken")
-  experienceGained         Int          @map("experience_gained")
-  goldGained               Int          @map("gold_gained")
-  battleDate               DateTime     @default(now()) @map("battle_date")
+  id                         String       @id @default(cuid())
+  character_id               String
+  monster_id                 Int
+  battleResult               BattleResult
+  character_health_remaining Int
+  monster_health_remaining   Int
+  turns_taken                Int
+  experience_gained          Int
+  gold_gained                Int
+  battle_date                DateTime     @default(now())
 
   // Relations
-  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  monster   Monster   @relation(fields: [monsterId], references: [id])
+  character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  monster   Monster   @relation(fields: [monster_id], references: [id])
 
   @@map("battle_logs")
 }
@@ -215,7 +215,7 @@ model ExperienceLevel {
   id         Int      @id @default(autoincrement())
   level      Int      @unique
   experience Int
-  createdAt  DateTime @default(now()) @map("created_at")
+  created_at DateTime @default(now())
 
   @@map("experience_levels")
 }

@@ -11,7 +11,7 @@ export class MonstersService {
     const where: Prisma.MonsterWhereInput = {};
 
     if (filters.level) where.level = filters.level;
-    if (filters.mapId) where.mapId = filters.mapId;
+    if (filters.mapId) where.map_id = filters.mapId;
     if (filters.rank) {
       where.details = { rank: filters.rank };
     }
@@ -64,7 +64,7 @@ export class MonstersService {
 
     const [monsters, total] = await Promise.all([
       prisma.monster.findMany({
-        where: { mapId },
+        where: { map_id: mapId },
         include: {
           details: true,
         },
@@ -72,7 +72,7 @@ export class MonstersService {
         take: limit,
         orderBy: { level: 'asc' },
       }),
-      prisma.monster.count({ where: { mapId } }),
+      prisma.monster.count({ where: { map_id: mapId } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);

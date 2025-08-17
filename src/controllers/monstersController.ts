@@ -1,7 +1,12 @@
 import type { MonsterRank } from '@prisma/client';
 import { type Request, type Response } from 'express';
 import { MonstersService } from '~/services/monstersService';
-import { sendInternalError, sendNotFound, sendSuccess } from '~/utils/response';
+import {
+  sendInternalError,
+  sendNotFound,
+  sendSuccess,
+  sendSuccessWithPagination,
+} from '~/utils/response';
 
 export class MonstersController {
   private monstersService: MonstersService;
@@ -21,7 +26,7 @@ export class MonstersController {
       const filters = { level, mapId, rank };
       const result = await this.monstersService.getMonsters(page, limit, filters);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.monsters, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get monsters error:', error);
 
@@ -54,7 +59,7 @@ export class MonstersController {
 
       const result = await this.monstersService.getMonstersByMap(Number(mapId), page, limit);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.monsters, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get monsters by map error:', error);
 
@@ -70,7 +75,7 @@ export class MonstersController {
 
       const result = await this.monstersService.getMonstersByRank(rank, page, limit);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.monsters, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get monsters by rank error:', error);
 

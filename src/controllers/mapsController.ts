@@ -1,7 +1,12 @@
 import type { MapDifficulty } from '@prisma/client';
 import { type Request, type Response } from 'express';
 import { MapsService } from '~/services/mapsService';
-import { sendInternalError, sendNotFound, sendSuccess } from '~/utils/response';
+import {
+  sendInternalError,
+  sendNotFound,
+  sendSuccess,
+  sendSuccessWithPagination,
+} from '~/utils/response';
 
 export class MapsController {
   private mapsService: MapsService;
@@ -21,7 +26,7 @@ export class MapsController {
       const filters = { difficulty, minLevel, maxLevel };
       const result = await this.mapsService.getMaps(page, limit, filters);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.maps, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get maps error:', error);
 
@@ -54,7 +59,7 @@ export class MapsController {
 
       const result = await this.mapsService.getMapsByDifficulty(difficulty, page, limit);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.maps, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get maps by difficulty error:', error);
 
@@ -70,7 +75,7 @@ export class MapsController {
 
       const result = await this.mapsService.getMapsByLevelRange(Number(minLevel), page, limit);
 
-      return sendSuccess(res, result);
+      return sendSuccessWithPagination(res, result.maps, result.pagination.total, page, limit);
     } catch (error) {
       console.error('Get maps by level error:', error);
 

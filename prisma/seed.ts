@@ -107,16 +107,16 @@ export class FakerSeeder {
         create: {
           name: jobClass.name,
           description: jobClass.description,
-          baseHealth: jobClass.baseHealth,
-          baseAttack: jobClass.baseAttack,
-          baseDefense: jobClass.baseDefense,
-          baseSpeed: jobClass.baseSpeed,
-          baseCritical: jobClass.baseCritical,
-          healthPerLevel: jobClass.healthPerLevel,
-          attackPerLevel: jobClass.attackPerLevel,
-          defensePerLevel: jobClass.defensePerLevel,
-          speedPerLevel: jobClass.speedPerLevel,
-          criticalPerLevel: jobClass.criticalPerLevel,
+          base_health: jobClass.baseHealth,
+          base_attack: jobClass.baseAttack,
+          base_defense: jobClass.baseDefense,
+          base_speed: jobClass.baseSpeed,
+          base_critical: jobClass.baseCritical,
+          health_per_level: jobClass.healthPerLevel,
+          attack_per_level: jobClass.attackPerLevel,
+          defense_per_level: jobClass.defensePerLevel,
+          speed_per_level: jobClass.speedPerLevel,
+          critical_per_level: jobClass.criticalPerLevel,
         },
       });
     }
@@ -307,10 +307,10 @@ export class FakerSeeder {
         data: {
           name: mountain.name,
           description,
-          minLevel,
-          maxLevel,
+          min_level: minLevel,
+          max_level: maxLevel,
           difficulty,
-          backgroundImage,
+          background_image: backgroundImage,
         },
       });
     }
@@ -403,9 +403,9 @@ export class FakerSeeder {
           defense,
           speed,
           critical,
-          experienceReward,
-          goldReward,
-          mapId,
+          experience_reward: experienceReward,
+          gold_reward: goldReward,
+          map_id: mapId,
         },
       });
 
@@ -416,11 +416,11 @@ export class FakerSeeder {
 
       await prisma.monsterDetails.create({
         data: {
-          monsterId: monster.id,
+          monster_id: monster.id,
           rank: rank as 'normal' | 'elite' | 'boss' | 'legendary',
           description,
-          imageUrl,
-          dropTable,
+          image_url: imageUrl,
+          drop_table: dropTable,
         },
       });
     }
@@ -553,14 +553,14 @@ export class FakerSeeder {
           name,
           type: type as 'weapon' | 'armor' | 'accessory',
           rarity: rarity as 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary',
-          minLevel,
-          healthBonus,
-          attackBonus,
-          defenseBonus,
-          speedBonus,
-          criticalBonus,
+          min_level: minLevel,
+          health_bonus: healthBonus,
+          attack_bonus: attackBonus,
+          defense_bonus: defenseBonus,
+          speed_bonus: speedBonus,
+          critical_bonus: criticalBonus,
           description,
-          dropRate,
+          drop_rate: dropRate,
         },
       });
     }
@@ -638,9 +638,9 @@ export class FakerSeeder {
           name,
           type,
           description,
-          effectValue,
+          effect_value: effectValue,
           rarity: rarity as 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary',
-          dropRate,
+          drop_rate: dropRate,
         },
       });
     }

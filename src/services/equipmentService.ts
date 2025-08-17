@@ -12,14 +12,14 @@ export class EquipmentService {
 
     if (filters.type) where.type = filters.type;
     if (filters.rarity) where.rarity = filters.rarity;
-    if (filters.minLevel) where.minLevel = { gte: filters.minLevel };
+    if (filters.minLevel) where.min_level = { gte: filters.minLevel };
 
     const [equipment, total] = await Promise.all([
       prisma.equipment.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
       }),
       prisma.equipment.count({ where }),
     ]);
@@ -57,7 +57,7 @@ export class EquipmentService {
         where: { type },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
       }),
       prisma.equipment.count({ where: { type } }),
     ]);
@@ -83,7 +83,7 @@ export class EquipmentService {
         where: { rarity },
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
       }),
       prisma.equipment.count({ where: { rarity } }),
     ]);
