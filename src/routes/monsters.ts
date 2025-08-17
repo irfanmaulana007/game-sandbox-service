@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
-import { MonstersController } from '../controllers/monstersController';
-import { validateNumericIdParam, validatePagination } from '../middleware/validation';
+import { MonstersController } from '~/controllers/monstersController';
+import { validateNumericIdParam, validatePagination } from '~/middleware/validation';
 
 const router = Router();
 const monstersController = new MonstersController();

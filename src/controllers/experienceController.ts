@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
-import { type AuthRequest } from '../middleware/auth';
-import { ExperienceService } from '../services/experienceService';
+import { type AuthRequest } from '~/middleware/auth';
+import { ExperienceService } from '~/services/experienceService';
 import {
   sendBadRequest,
   sendCreated,
@@ -9,7 +9,7 @@ import {
   sendSuccess,
   sendSuccessWithPagination,
   sendUnauthorized,
-} from '../utils/response';
+} from '~/utils/response';
 
 export class ExperienceController {
   private experienceService: ExperienceService;
@@ -27,6 +27,7 @@ export class ExperienceController {
         page,
         limit
       );
+
       sendSuccessWithPagination(res, experienceLevels, total, page, limit);
     } catch (error) {
       console.error('Get experience levels error:', error);
@@ -38,11 +39,13 @@ export class ExperienceController {
     try {
       const level = parseInt(req.params.id);
       const experienceLevel = await this.experienceService.getExperienceLevelByLevel(level);
+
       sendSuccess(res, experienceLevel);
     } catch (error) {
       if (error instanceof Error && error.message.includes('not found')) {
         return sendNotFound(res, error.message);
       }
+
       console.error('Get experience level error:', error);
       sendInternalError(res, 'Failed to retrieve experience level');
     }
@@ -58,6 +61,7 @@ export class ExperienceController {
       // For now, allowing any authenticated user to create experience levels
 
       const newExperienceLevel = await this.experienceService.createExperienceLevel(req.body);
+
       sendCreated(res, newExperienceLevel, 'Experience level created successfully');
     } catch (error) {
       if (error instanceof Error) {
@@ -68,10 +72,12 @@ export class ExperienceController {
         ) {
           return sendBadRequest(res, error.message);
         }
+
         if (error.message.includes('already exists')) {
           return sendBadRequest(res, error.message);
         }
       }
+
       console.error('Create experience level error:', error);
       sendInternalError(res, 'Failed to create experience level');
     }
@@ -91,16 +97,19 @@ export class ExperienceController {
         level,
         req.body
       );
+
       sendSuccess(res, updatedExperienceLevel, 'Experience level updated successfully');
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('required') || error.message.includes('negative')) {
           return sendBadRequest(res, error.message);
         }
+
         if (error.message.includes('not found')) {
           return sendNotFound(res, error.message);
         }
       }
+
       console.error('Update experience level error:', error);
       sendInternalError(res, 'Failed to update experience level');
     }
@@ -116,12 +125,14 @@ export class ExperienceController {
       // For now, allowing any authenticated user to delete experience levels
 
       const level = parseInt(req.params.id);
+
       await this.experienceService.deleteExperienceLevel(level);
       sendSuccess(res, null, `Experience level ${level} deleted successfully`);
     } catch (error) {
       if (error instanceof Error && error.message.includes('not found')) {
         return sendNotFound(res, error.message);
       }
+
       console.error('Delete experience level error:', error);
       sendInternalError(res, 'Failed to delete experience level');
     }
@@ -138,6 +149,7 @@ export class ExperienceController {
 
       const { experienceLevels } = req.body;
       const result = await this.experienceService.bulkCreateExperienceLevels(experienceLevels);
+
       sendCreated(res, result, `${result.count} experience levels created successfully`);
     } catch (error) {
       if (error instanceof Error) {
@@ -148,10 +160,12 @@ export class ExperienceController {
         ) {
           return sendBadRequest(res, error.message);
         }
+
         if (error.message.includes('Duplicate') || error.message.includes('already exist')) {
           return sendBadRequest(res, error.message);
         }
       }
+
       console.error('Bulk create experience levels error:', error);
       sendInternalError(res, 'Failed to bulk create experience levels');
     }
@@ -161,11 +175,13 @@ export class ExperienceController {
     try {
       const currentExp = parseInt(req.params.currentExp);
       const result = await this.experienceService.getNextLevelInfo(currentExp);
+
       sendSuccess(res, result);
     } catch (error) {
       if (error instanceof Error && error.message.includes('valid non-negative number')) {
         return sendBadRequest(res, error.message);
       }
+
       console.error('Get next level info error:', error);
       sendInternalError(res, 'Failed to get next level information');
     }

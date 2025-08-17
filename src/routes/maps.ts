@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
-import { MapsController } from '../controllers/mapsController';
-import { validateNumericIdParam, validatePagination } from '../middleware/validation';
+import { MapsController } from '~/controllers/mapsController';
+import { validateNumericIdParam, validatePagination } from '~/middleware/validation';
 
 const router = Router();
 const mapsController = new MapsController();

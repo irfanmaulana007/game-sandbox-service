@@ -1,18 +1,19 @@
-import { prisma } from '../database/prisma';
+import type { MonsterRank, Prisma } from '@prisma/client';
+import { prisma } from '~/database/prisma';
 
 export class MonstersService {
   async getMonsters(
     page: number,
     limit: number,
-    filters: { level?: number; mapId?: number; rank?: string }
+    filters: { level?: number; mapId?: number; rank?: MonsterRank }
   ) {
     const skip = (page - 1) * limit;
-    const where: any = {};
+    const where: Prisma.MonsterWhereInput = {};
 
     if (filters.level) where.level = filters.level;
     if (filters.mapId) where.mapId = filters.mapId;
     if (filters.rank) {
-      where.details = { rank: filters.rank as any };
+      where.details = { rank: filters.rank };
     }
 
     const [monsters, total] = await Promise.all([
@@ -87,13 +88,13 @@ export class MonstersService {
     };
   }
 
-  async getMonstersByRank(rank: string, page: number, limit: number) {
+  async getMonstersByRank(rank: MonsterRank, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const [monsters, total] = await Promise.all([
       prisma.monster.findMany({
         where: {
-          details: { rank: rank as any },
+          details: { rank },
         },
         include: {
           details: true,
@@ -105,7 +106,7 @@ export class MonstersService {
       }),
       prisma.monster.count({
         where: {
-          details: { rank: rank as any },
+          details: { rank },
         },
       }),
     ]);

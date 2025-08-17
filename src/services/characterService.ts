@@ -1,5 +1,5 @@
-import { prisma } from '../database/prisma';
-import type { AllocateStatsRequest, CreateCharacterRequest } from '../types';
+import { prisma } from '~/database/prisma';
+import type { AllocateStatsRequest, CreateCharacterRequest } from '~/types';
 
 export class CharacterService {
   async getCharactersByUserId(userId: string, page: number, limit: number) {

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../database/prisma';
-import type { CreateUserRequest, JwtPayload, LoginRequest } from '../types';
+import { prisma } from '~/database/prisma';
+import type { CreateUserRequest, JwtPayload, LoginRequest } from '~/types';
 
 export class AuthService {
   async registerUser(userData: CreateUserRequest) {
@@ -67,6 +67,7 @@ export class AuthService {
 
     // Generate JWT token
     const secret = process.env.JWT_SECRET;
+
     if (!secret) {
       throw new Error('JWT_SECRET not configured');
     }
@@ -78,8 +79,8 @@ export class AuthService {
     };
 
     const token = jwt.sign(payload, secret, {
-      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-    } as any);
+      expiresIn: (process.env.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn']) || '7d',
+    });
 
     return {
       user: {

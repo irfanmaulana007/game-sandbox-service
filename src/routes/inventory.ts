@@ -1,7 +1,7 @@
 import { Router, type Response } from 'express';
-import { InventoryController } from '../controllers/inventoryController';
-import { authenticateToken, type AuthRequest } from '../middleware/auth';
-import { validateCharacterIdParam, validateItemIdParam } from '../middleware/validation';
+import { InventoryController } from '~/controllers/inventoryController';
+import { authenticateToken, type AuthRequest } from '~/middleware/auth';
+import { validateCharacterIdParam, validateItemIdParam } from '~/middleware/validation';
 
 const router = Router();
 const inventoryController = new InventoryController();

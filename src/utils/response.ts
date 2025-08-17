@@ -1,7 +1,7 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 
 // Response types
-export interface SuccessResponse<T = any> {
+export interface SuccessResponse<T = unknown> {
   success: true;
   data: T;
   message?: string;
@@ -12,7 +12,7 @@ export interface ErrorResponse {
   success: false;
   message: string;
   errorStatus: number;
-  data?: any;
+  data?: unknown;
 }
 
 export interface PaginationInfo {
@@ -98,50 +98,57 @@ export function sendError(
   res: Response,
   message: string,
   errorStatus: number = 500,
-  data?: any
+  data?: unknown
 ): void {
   const response: ErrorResponse = {
     success: false,
     message,
     errorStatus,
-    ...(data && { data }),
   };
+
+  if (data !== undefined) {
+    response.data = data;
+  }
 
   res.status(errorStatus).json(response);
 }
 
-export function sendBadRequest(res: Response, message: string = 'Bad request', data?: any): void {
+export function sendBadRequest(
+  res: Response,
+  message: string = 'Bad request',
+  data?: unknown
+): void {
   sendError(res, message, 400, data);
 }
 
 export function sendUnauthorized(
   res: Response,
   message: string = 'Unauthorized',
-  data?: any
+  data?: unknown
 ): void {
   sendError(res, message, 401, data);
 }
 
-export function sendForbidden(res: Response, message: string = 'Forbidden', data?: any): void {
+export function sendForbidden(res: Response, message: string = 'Forbidden', data?: unknown): void {
   sendError(res, message, 403, data);
 }
 
 export function sendNotFound(
   res: Response,
   message: string = 'Resource not found',
-  data?: any
+  data?: unknown
 ): void {
   sendError(res, message, 404, data);
 }
 
-export function sendConflict(res: Response, message: string = 'Conflict', data?: any): void {
+export function sendConflict(res: Response, message: string = 'Conflict', data?: unknown): void {
   sendError(res, message, 409, data);
 }
 
 export function sendValidationError(
   res: Response,
   message: string = 'Validation error',
-  data?: any
+  data?: unknown
 ): void {
   sendError(res, message, 422, data);
 }
@@ -149,15 +156,18 @@ export function sendValidationError(
 export function sendInternalError(
   res: Response,
   message: string = 'Internal server error',
-  data?: any
+  data?: unknown
 ): void {
   sendError(res, message, 500, data);
 }
 
 // Pagination helper for database queries
-export function getPaginationParams(query: any): { page: number; limit: number } {
-  const page = Math.max(1, parseInt(query.page) || 1);
-  const limit = Math.min(100, Math.max(1, parseInt(query.limit) || 10));
+export function getPaginationParams(query: Record<string, unknown>): {
+  page: number;
+  limit: number;
+} {
+  const page = Math.max(1, parseInt(String(query.page)) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(String(query.limit)) || 10));
 
   return { page, limit };
 }

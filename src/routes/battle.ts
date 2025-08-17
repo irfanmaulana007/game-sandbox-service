@@ -1,7 +1,7 @@
 import { Router, type Response } from 'express';
-import { BattleController } from '../controllers/battleController';
-import { authenticateToken, type AuthRequest } from '../middleware/auth';
-import { validateBattleRequest, validateIdParam } from '../middleware/validation';
+import { BattleController } from '~/controllers/battleController';
+import { authenticateToken, type AuthRequest } from '~/middleware/auth';
+import { validateBattleRequest, validateIdParam } from '~/middleware/validation';
 
 const router = Router();
 const battleController = new BattleController();

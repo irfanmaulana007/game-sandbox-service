@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
-import { ExperienceController } from '../controllers/experienceController';
-import { authenticateToken, type AuthRequest } from '../middleware/auth';
-import { validateIdParam } from '../middleware/validation';
+import { ExperienceController } from '~/controllers/experienceController';
+import { authenticateToken, type AuthRequest } from '~/middleware/auth';
+import { validateIdParam } from '~/middleware/validation';
 
 const router = Router();
 const experienceController = new ExperienceController();

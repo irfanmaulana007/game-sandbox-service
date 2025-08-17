@@ -1,6 +1,6 @@
 import { type Response } from 'express';
-import { type AuthRequest } from '../middleware/auth';
-import { InventoryService } from '../services/inventoryService';
+import { type AuthRequest } from '~/middleware/auth';
+import { InventoryService } from '~/services/inventoryService';
 import {
   sendCreated,
   sendForbidden,
@@ -8,7 +8,7 @@ import {
   sendNotFound,
   sendSuccess,
   sendUnauthorized,
-} from '../utils/response';
+} from '~/utils/response';
 
 export class InventoryController {
   private inventoryService: InventoryService;
@@ -35,11 +35,14 @@ export class InventoryController {
         if (error.message === 'Character not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Character does not belong to user') {
           return sendForbidden(res, error.message);
         }
       }
+
       console.error('Get inventory error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -70,14 +73,18 @@ export class InventoryController {
         if (error.message === 'Character not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Character does not belong to user') {
           return sendForbidden(res, error.message);
         }
+
         if (error.message === 'Item not found') {
           return sendNotFound(res, error.message);
         }
       }
+
       console.error('Add item error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -108,14 +115,18 @@ export class InventoryController {
         if (error.message === 'Character not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Character does not belong to user') {
           return sendForbidden(res, error.message);
         }
+
         if (error.message === 'Item not found in inventory') {
           return sendNotFound(res, error.message);
         }
       }
+
       console.error('Update item error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -136,14 +147,18 @@ export class InventoryController {
         if (error.message === 'Character not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Character does not belong to user') {
           return sendForbidden(res, error.message);
         }
+
         if (error.message === 'Item not found in inventory') {
           return sendNotFound(res, error.message);
         }
       }
+
       console.error('Remove item error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }

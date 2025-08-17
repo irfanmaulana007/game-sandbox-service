@@ -1,4 +1,4 @@
-import { prisma } from '../database/prisma';
+import { prisma } from '~/database/prisma';
 
 export class InventoryService {
   async getCharacterInventory(characterId: string, userId: string) {
@@ -47,7 +47,7 @@ export class InventoryService {
 
     // Check if item exists
     const item = await prisma.item.findUnique({
-      where: { id: itemId },
+      where: { id: Number(itemId) },
     });
 
     if (!item) {
@@ -58,7 +58,7 @@ export class InventoryService {
     const existingItem = await prisma.characterInventory.findFirst({
       where: {
         characterId,
-        itemId,
+        itemId: Number(itemId),
       },
     });
 
@@ -80,7 +80,7 @@ export class InventoryService {
       const newItem = await prisma.characterInventory.create({
         data: {
           characterId,
-          itemId,
+          itemId: Number(itemId),
           quantity,
         },
         include: { item: true },

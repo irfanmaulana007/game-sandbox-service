@@ -1,6 +1,7 @@
+import type { MonsterRank } from '@prisma/client';
 import { type Request, type Response } from 'express';
-import { MonstersService } from '../services/monstersService';
-import { sendInternalError, sendNotFound, sendSuccess } from '../utils/response';
+import { MonstersService } from '~/services/monstersService';
+import { sendInternalError, sendNotFound, sendSuccess } from '~/utils/response';
 
 export class MonstersController {
   private monstersService: MonstersService;
@@ -15,7 +16,7 @@ export class MonstersController {
       const limit = parseInt(req.query.limit as string) || 20;
       const level = req.query.level ? parseInt(req.query.level as string) : undefined;
       const mapId = req.query.mapId ? parseInt(req.query.mapId as string) : undefined;
-      const rank = req.query.rank as string;
+      const rank = req.query.rank as MonsterRank;
 
       const filters = { level, mapId, rank };
       const result = await this.monstersService.getMonsters(page, limit, filters);
@@ -23,6 +24,7 @@ export class MonstersController {
       return sendSuccess(res, result);
     } catch (error) {
       console.error('Get monsters error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -31,12 +33,15 @@ export class MonstersController {
     try {
       const { id } = req.params;
       const monster = await this.monstersService.getMonsterById(Number(id));
+
       return sendSuccess(res, monster);
     } catch (error) {
       if (error instanceof Error && error.message === 'Monster not found') {
         return sendNotFound(res, error.message);
       }
+
       console.error('Get monster error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -48,23 +53,27 @@ export class MonstersController {
       const limit = parseInt(req.query.limit as string) || 20;
 
       const result = await this.monstersService.getMonstersByMap(Number(mapId), page, limit);
+
       return sendSuccess(res, result);
     } catch (error) {
       console.error('Get monsters by map error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
 
   async getMonstersByRank(req: Request, res: Response) {
     try {
-      const { rank } = req.params;
+      const rank = req.query.rank as MonsterRank;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
 
       const result = await this.monstersService.getMonstersByRank(rank, page, limit);
+
       return sendSuccess(res, result);
     } catch (error) {
       console.error('Get monsters by rank error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }

@@ -1,11 +1,11 @@
 import { Router, type Response } from 'express';
-import { CharacterController } from '../controllers/characterController';
-import { authenticateToken, type AuthRequest } from '../middleware/auth';
+import { CharacterController } from '~/controllers/characterController';
+import { authenticateToken, type AuthRequest } from '~/middleware/auth';
 import {
   validateCharacterCreation,
   validateIdParam,
   validateStatAllocation,
-} from '../middleware/validation';
+} from '~/middleware/validation';
 
 const router = Router();
 const characterController = new CharacterController();

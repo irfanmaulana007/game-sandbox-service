@@ -10,7 +10,6 @@ import authRoutes from './routes/auth';
 import battleRoutes from './routes/battle';
 import characterRoutes from './routes/characters';
 import equipmentRoutes from './routes/equipment';
-import exampleRoutes from './routes/example';
 import experienceRoutes from './routes/experience';
 import inventoryRoutes from './routes/inventory';
 import mapRoutes from './routes/maps';
@@ -74,7 +73,6 @@ app.use('/api/monsters', monsterRoutes);
 app.use('/api/maps', mapRoutes);
 app.use('/api/battle', battleRoutes);
 app.use('/api/inventory', inventoryRoutes);
-app.use('/api/examples', exampleRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

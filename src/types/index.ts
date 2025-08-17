@@ -154,7 +154,7 @@ export interface MonsterDetails {
   rank: 'normal' | 'elite' | 'boss' | 'legendary';
   description: string;
   image_url: string;
-  drop_table: any;
+  drop_table: unknown;
   created_at: Date;
 }
 
@@ -166,7 +166,6 @@ export interface MonsterWithDetails extends Monster {
 export interface BattleEntity {
   id: string | number;
   health: number;
-  max_health: number;
   attack: number;
   defense: number;
   speed: number;
@@ -212,7 +211,7 @@ export interface UpdateExperienceLevelRequest {
 }
 
 // API Response types - Legacy (deprecated, use response utility instead)
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -229,7 +228,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 }
 
 // New standardized response types
-export interface StandardSuccessResponse<T = any> {
+export interface StandardSuccessResponse<T = unknown> {
   success: true;
   data: T;
   message?: string;
@@ -247,10 +246,10 @@ export interface StandardErrorResponse {
   success: false;
   message: string;
   errorStatus: number;
-  data?: any;
+  data?: unknown;
 }
 
-export type StandardApiResponse<T = any> = StandardSuccessResponse<T> | StandardErrorResponse;
+export type StandardApiResponse<T = unknown> = StandardSuccessResponse<T> | StandardErrorResponse;
 
 // Authentication types
 export interface JwtPayload {

@@ -1,13 +1,13 @@
 import { type Request, type Response } from 'express';
-import { type AuthRequest } from '../middleware/auth';
-import { AuthService } from '../services/authService';
+import { type AuthRequest } from '~/middleware/auth';
+import { AuthService } from '~/services/authService';
 import {
   sendCreated,
   sendInternalError,
   sendNotFound,
   sendSuccess,
   sendUnauthorized,
-} from '../utils/response';
+} from '~/utils/response';
 
 export class AuthController {
   private authService: AuthService;
@@ -19,6 +19,7 @@ export class AuthController {
   async register(req: Request, res: Response) {
     try {
       const newUser = await this.authService.registerUser(req.body);
+
       return sendCreated(res, newUser, 'User registered successfully');
     } catch (error) {
       if (error instanceof Error && error.message === 'Username or email already exists') {
@@ -27,7 +28,9 @@ export class AuthController {
           error: error.message,
         });
       }
+
       console.error('Registration error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -35,6 +38,7 @@ export class AuthController {
   async login(req: Request, res: Response) {
     try {
       const result = await this.authService.loginUser(req.body);
+
       return sendSuccess(res, result, 'Login successful');
     } catch (error) {
       if (error instanceof Error && error.message === 'Invalid credentials') {
@@ -43,7 +47,9 @@ export class AuthController {
           error: error.message,
         });
       }
+
       console.error('Login error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -55,12 +61,15 @@ export class AuthController {
       }
 
       const user = await this.authService.getCurrentUser(req.user.userId);
+
       return sendSuccess(res, user);
     } catch (error) {
       if (error instanceof Error && error.message === 'User not found') {
         return sendNotFound(res, 'User not found');
       }
+
       console.error('Get user error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -72,6 +81,7 @@ export class AuthController {
       return sendSuccess(res, null, 'Logout successful');
     } catch (error) {
       console.error('Logout error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }

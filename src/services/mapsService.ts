@@ -1,13 +1,14 @@
-import { prisma } from '../database/prisma';
+import type { MapDifficulty, Prisma } from '@prisma/client';
+import { prisma } from '~/database/prisma';
 
 export class MapsService {
   async getMaps(
     page: number,
     limit: number,
-    filters: { difficulty?: string; minLevel?: number; maxLevel?: number }
+    filters: { difficulty?: MapDifficulty; minLevel?: number; maxLevel?: number }
   ) {
     const skip = (page - 1) * limit;
-    const where: any = {};
+    const where: Prisma.GameMapWhereInput = {};
 
     if (filters.difficulty) where.difficulty = filters.difficulty;
     if (filters.minLevel) where.minLevel = { gte: filters.minLevel };
@@ -61,12 +62,12 @@ export class MapsService {
     return map;
   }
 
-  async getMapsByDifficulty(difficulty: string, page: number, limit: number) {
+  async getMapsByDifficulty(difficulty: MapDifficulty, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const [maps, total] = await Promise.all([
       prisma.gameMap.findMany({
-        where: { difficulty: difficulty as any },
+        where: { difficulty },
         include: {
           _count: {
             select: { monsters: true },
@@ -76,7 +77,7 @@ export class MapsService {
         take: limit,
         orderBy: { minLevel: 'asc' },
       }),
-      prisma.gameMap.count({ where: { difficulty: difficulty as any } }),
+      prisma.gameMap.count({ where: { difficulty } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);

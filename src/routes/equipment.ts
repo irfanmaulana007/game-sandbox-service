@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
-import { EquipmentController } from '../controllers/equipmentController';
-import { validateNumericIdParam, validatePagination } from '../middleware/validation';
+import { EquipmentController } from '~/controllers/equipmentController';
+import { validateNumericIdParam, validatePagination } from '~/middleware/validation';
 
 const router = Router();
 const equipmentController = new EquipmentController();

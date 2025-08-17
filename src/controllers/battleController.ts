@@ -1,13 +1,13 @@
 import { type Response } from 'express';
-import { type AuthRequest } from '../middleware/auth';
-import { BattleService } from '../services/battleService';
+import { type AuthRequest } from '~/middleware/auth';
+import { BattleService } from '~/services/battleService';
 import {
   sendForbidden,
   sendInternalError,
   sendNotFound,
   sendSuccess,
   sendUnauthorized,
-} from '../utils/response';
+} from '~/utils/response';
 
 export class BattleController {
   private battleService: BattleService;
@@ -23,6 +23,7 @@ export class BattleController {
       }
 
       const result = await this.battleService.startBattle(req.user.userId, req.body);
+
       return sendSuccess(res, result);
     } catch (error) {
       if (error instanceof Error) {
@@ -32,11 +33,14 @@ export class BattleController {
             error: error.message,
           });
         }
+
         if (error.message === 'Character does not belong to user') {
           return sendForbidden(res, error.message);
         }
       }
+
       console.error('Battle start error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -49,17 +53,21 @@ export class BattleController {
 
       const { id } = req.params;
       const battleLog = await this.battleService.getBattleById(id, req.user.userId);
+
       return sendSuccess(res, battleLog);
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === 'Battle not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Battle does not belong to user') {
           return sendForbidden(res, error.message);
         }
       }
+
       console.error('Get battle error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }
@@ -87,11 +95,14 @@ export class BattleController {
         if (error.message === 'Character not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Character does not belong to user') {
           return sendForbidden(res, error.message);
         }
       }
+
       console.error('Get character battles error:', error);
+
       return sendInternalError(res, 'Internal server error');
     }
   }

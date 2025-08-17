@@ -1,5 +1,5 @@
-import { prisma } from '../database/prisma';
-import type { CreateExperienceLevelRequest, UpdateExperienceLevelRequest } from '../types';
+import { prisma } from '~/database/prisma';
+import type { CreateExperienceLevelRequest, UpdateExperienceLevelRequest } from '~/types';
 
 export class ExperienceService {
   async getExperienceLevels(page: number, limit: number) {
@@ -141,6 +141,7 @@ export class ExperienceService {
 
     if (existingLevels.length > 0) {
       const existingLevelNumbers = existingLevels.map(el => el.level);
+
       throw new Error(`Levels ${existingLevelNumbers.join(', ')} already exist`);
     }
 

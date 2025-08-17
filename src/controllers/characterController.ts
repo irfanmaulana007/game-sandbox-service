@@ -1,6 +1,6 @@
 import { type Response } from 'express';
-import { type AuthRequest } from '../middleware/auth';
-import { CharacterService } from '../services/characterService';
+import { type AuthRequest } from '~/middleware/auth';
+import { CharacterService } from '~/services/characterService';
 import {
   sendBadRequest,
   sendConflict,
@@ -10,7 +10,7 @@ import {
   sendSuccess,
   sendSuccessWithPagination,
   sendUnauthorized,
-} from '../utils/response';
+} from '~/utils/response';
 
 export class CharacterController {
   private characterService: CharacterService;
@@ -48,6 +48,7 @@ export class CharacterController {
       }
 
       const character = await this.characterService.getCharacterByUserId(req.user.userId);
+
       sendSuccess(res, character);
     } catch (error) {
       if (
@@ -56,6 +57,7 @@ export class CharacterController {
       ) {
         return sendNotFound(res, error.message);
       }
+
       console.error('Get my character error:', error);
       sendInternalError(res, 'Failed to retrieve character');
     }
@@ -75,10 +77,12 @@ export class CharacterController {
         if (error.message === 'Invalid job class') {
           return sendBadRequest(res, error.message);
         }
+
         if (error.message === 'Character name already exists') {
           return sendConflict(res, error.message);
         }
       }
+
       console.error('Create character error:', error);
       sendInternalError(res, 'Failed to create character');
     }
@@ -92,11 +96,13 @@ export class CharacterController {
 
       const { id } = req.params;
       const character = await this.characterService.getCharacterById(id, req.user.userId);
+
       sendSuccess(res, character);
     } catch (error) {
       if (error instanceof Error && error.message === 'Character not found') {
         return sendNotFound(res, error.message);
       }
+
       console.error('Get character error:', error);
       sendInternalError(res, 'Failed to retrieve character');
     }
@@ -122,6 +128,7 @@ export class CharacterController {
       if (error instanceof Error && error.message === 'Character not found') {
         return sendNotFound(res, error.message);
       }
+
       console.error('Update character error:', error);
       sendInternalError(res, 'Failed to update character');
     }
@@ -141,6 +148,7 @@ export class CharacterController {
       if (error instanceof Error && error.message === 'Character not found') {
         return sendNotFound(res, error.message);
       }
+
       console.error('Delete character error:', error);
       sendInternalError(res, 'Failed to delete character');
     }
@@ -165,10 +173,12 @@ export class CharacterController {
         if (error.message === 'Character not found') {
           return sendNotFound(res, error.message);
         }
+
         if (error.message === 'Not enough status points available') {
           return sendBadRequest(res, error.message);
         }
       }
+
       console.error('Allocate stats error:', error);
       sendInternalError(res, 'Failed to allocate stats');
     }

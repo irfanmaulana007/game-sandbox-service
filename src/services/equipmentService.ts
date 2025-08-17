@@ -1,13 +1,14 @@
-import { prisma } from '../database/prisma';
+import type { EquipmentType, Prisma, Rarity } from '@prisma/client';
+import { prisma } from '~/database/prisma';
 
 export class EquipmentService {
   async getEquipment(
     page: number,
     limit: number,
-    filters: { type?: string; rarity?: string; minLevel?: number }
+    filters: { type?: EquipmentType; rarity?: Rarity; minLevel?: number }
   ) {
     const skip = (page - 1) * limit;
-    const where: any = {};
+    const where: Prisma.EquipmentWhereInput = {};
 
     if (filters.type) where.type = filters.type;
     if (filters.rarity) where.rarity = filters.rarity;
@@ -48,17 +49,17 @@ export class EquipmentService {
     return equipment;
   }
 
-  async getEquipmentByType(type: string, page: number, limit: number) {
+  async getEquipmentByType(type: EquipmentType, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const [equipment, total] = await Promise.all([
       prisma.equipment.findMany({
-        where: { type: type as any },
+        where: { type },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.equipment.count({ where: { type: type as any } }),
+      prisma.equipment.count({ where: { type } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);
@@ -74,17 +75,17 @@ export class EquipmentService {
     };
   }
 
-  async getEquipmentByRarity(rarity: string, page: number, limit: number) {
+  async getEquipmentByRarity(rarity: Rarity, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const [equipment, total] = await Promise.all([
       prisma.equipment.findMany({
-        where: { rarity: rarity as any },
+        where: { rarity },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.equipment.count({ where: { rarity: rarity as any } }),
+      prisma.equipment.count({ where: { rarity } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);
