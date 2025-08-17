@@ -202,7 +202,7 @@ export interface ExperienceLevel {
   experience: number;
 }
 
-// API Response types
+// API Response types - Legacy (deprecated, use response utility instead)
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
@@ -218,6 +218,30 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     totalPages: number;
   };
 }
+
+// New standardized response types
+export interface StandardSuccessResponse<T = any> {
+  success: true;
+  data: T;
+  message?: string;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+export interface StandardErrorResponse {
+  success: false;
+  message: string;
+  errorStatus: number;
+  data?: any;
+}
+
+export type StandardApiResponse<T = any> = StandardSuccessResponse<T> | StandardErrorResponse;
 
 // Authentication types
 export interface JwtPayload {

@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import bcrypt from 'bcryptjs';
 import { prisma } from './prisma';
 import type { SeederConfig } from './seeder.config';
 import {
@@ -22,7 +21,7 @@ export class FakerSeeder {
     try {
       // Seed in order to maintain referential integrity
       await this.seedJobClasses();
-      await this.seedUsers();
+      // await this.seedUsers();
       await this.seedMaps();
       await this.seedMonsters();
       await this.seedEquipment();
@@ -121,28 +120,28 @@ export class FakerSeeder {
     }
   }
 
-  private async seedUsers(): Promise<void> {
-    console.log(`👥 Seeding ${this.config.users.count} users...`);
+  // private async seedUsers(): Promise<void> {
+  //   console.log(`👥 Seeding ${this.config.users.count} users...`);
 
-    const saltRounds = 12;
-    const passwordHash = await bcrypt.hash(this.config.users.defaultPassword, saltRounds);
+  //   const saltRounds = 12;
+  //   const passwordHash = await bcrypt.hash(this.config.users.defaultPassword, saltRounds);
 
-    for (let i = 0; i < this.config.users.count; i++) {
-      // const username = faker.internet.userName();
-      const username = 'irfanmaulana007';
-      const email = faker.internet.email();
+  //   for (let i = 0; i < this.config.users.count; i++) {
+  //     // const username = faker.internet.userName();
+  //     const username = 'irfanmaulana007';
+  //     const email = faker.internet.email();
 
-      await prisma.user.upsert({
-        where: { username },
-        update: {},
-        create: {
-          username,
-          email,
-          passwordHash,
-        },
-      });
-    }
-  }
+  //     await prisma.user.upsert({
+  //       where: { username },
+  //       update: {},
+  //       create: {
+  //         username,
+  //         email,
+  //         passwordHash,
+  //       },
+  //     });
+  //   }
+  // }
 
   private async seedMaps(): Promise<void> {
     console.log(`🗺️ Seeding ${this.config.maps.count} maps...`);

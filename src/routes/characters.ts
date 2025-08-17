@@ -7,6 +7,18 @@ import {
   validateStatAllocation,
 } from '../middleware/validation';
 import type { AllocateStatsRequest, CreateCharacterRequest } from '../types';
+import {
+  getPaginationParams,
+  getPrismaPagination,
+  sendBadRequest,
+  sendConflict,
+  sendCreated,
+  sendInternalError,
+  sendNotFound,
+  sendSuccess,
+  sendSuccessWithPagination,
+  sendUnauthorized,
+} from '../utils/response';
 
 const router = Router();
 
@@ -14,11 +26,16 @@ const router = Router();
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        error: 'User not authenticated',
-      });
+      return sendUnauthorized(res, 'User not authenticated');
     }
+
+    const { page, limit } = getPaginationParams(req.query);
+    const pagination = getPrismaPagination(page, limit);
+
+    // Get total count for pagination
+    const total = await prisma.character.count({
+      where: { userId: req.user.userId },
+    });
 
     const characters = await prisma.character.findMany({
       where: { userId: req.user.userId },
@@ -26,18 +43,13 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
         job: true,
       },
       orderBy: { createdAt: 'desc' },
+      ...pagination,
     });
 
-    res.json({
-      success: true,
-      data: characters,
-    });
+    sendSuccessWithPagination(res, characters, total, page, limit);
   } catch (error) {
     console.error('Get characters error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-    });
+    sendInternalError(res, 'Failed to retrieve characters');
   }
 });
 
@@ -49,10 +61,7 @@ router.post(
   async (req: AuthRequest, res: Response) => {
     try {
       if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          error: 'User not authenticated',
-        });
+        return sendUnauthorized(res, 'User not authenticated');
       }
 
       const { name, job_id }: CreateCharacterRequest = req.body;
@@ -63,10 +72,7 @@ router.post(
       });
 
       if (!job) {
-        return res.status(400).json({
-          success: false,
-          error: 'Invalid job class',
-        });
+        return sendBadRequest(res, 'Invalid job class');
       }
 
       // Check if character name already exists for this user
@@ -78,10 +84,7 @@ router.post(
       });
 
       if (existingCharacter) {
-        return res.status(400).json({
-          success: false,
-          error: 'Character name already exists',
-        });
+        return sendConflict(res, 'Character name already exists');
       }
 
       // Create character with base stats
@@ -103,18 +106,10 @@ router.post(
         },
       });
 
-      return res.status(201).json({
-        success: true,
-        data: newCharacter,
-        message: 'Character created successfully',
-      });
+      return sendCreated(res, newCharacter, 'Character created successfully');
     } catch (error) {
       console.error('Create character error:', error);
-
-      return res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
+      return sendInternalError(res, 'Failed to create character');
     }
   }
 );
@@ -123,10 +118,7 @@ router.post(
 router.get('/:id', authenticateToken, validateIdParam, async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        error: 'User not authenticated',
-      });
+      return sendUnauthorized(res, 'User not authenticated');
     }
 
     const { id } = req.params;
@@ -142,22 +134,13 @@ router.get('/:id', authenticateToken, validateIdParam, async (req: AuthRequest, 
     });
 
     if (!character) {
-      return res.status(404).json({
-        success: false,
-        error: 'Character not found',
-      });
+      return sendNotFound(res, 'Character not found');
     }
 
-    res.json({
-      success: true,
-      data: character,
-    });
+    sendSuccess(res, character);
   } catch (error) {
     console.error('Get character error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-    });
+    sendInternalError(res, 'Failed to retrieve character');
   }
 });
 
@@ -183,10 +166,7 @@ router.put('/:id', authenticateToken, validateIdParam, async (req: AuthRequest, 
     });
 
     if (!existingCharacter) {
-      return res.status(404).json({
-        success: false,
-        error: 'Character not found',
-      });
+      return sendNotFound(res, 'Character not found');
     }
 
     // Update character
@@ -195,17 +175,10 @@ router.put('/:id', authenticateToken, validateIdParam, async (req: AuthRequest, 
       data: { name },
     });
 
-    return res.json({
-      success: true,
-      data: updatedCharacter,
-      message: 'Character updated successfully',
-    });
+    return sendSuccess(res, updatedCharacter, 'Character updated successfully');
   } catch (error) {
     console.error('Update character error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-    });
+    sendInternalError(res, 'Failed to update character');
   }
 });
 
@@ -217,10 +190,7 @@ router.delete(
   async (req: AuthRequest, res: Response) => {
     try {
       if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          error: 'User not authenticated',
-        });
+        return sendUnauthorized(res, 'User not authenticated');
       }
 
       const { id } = req.params;
@@ -234,10 +204,7 @@ router.delete(
       });
 
       if (!existingCharacter) {
-        return res.status(404).json({
-          success: false,
-          error: 'Character not found',
-        });
+        return sendNotFound(res, 'Character not found');
       }
 
       // Delete character (cascade will handle related data)
@@ -245,16 +212,10 @@ router.delete(
         where: { id },
       });
 
-      res.json({
-        success: true,
-        message: 'Character deleted successfully',
-      });
+      sendSuccess(res, null, 'Character deleted successfully');
     } catch (error) {
       console.error('Delete character error:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
+      sendInternalError(res, 'Failed to delete character');
     }
   }
 );
@@ -268,10 +229,7 @@ router.post(
   async (req: AuthRequest, res: Response) => {
     try {
       if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          error: 'User not authenticated',
-        });
+        return sendUnauthorized(res, 'User not authenticated');
       }
 
       const { id } = req.params;
@@ -292,20 +250,14 @@ router.post(
       });
 
       if (!char) {
-        return res.status(404).json({
-          success: false,
-          error: 'Character not found',
-        });
+        return sendNotFound(res, 'Character not found');
       }
 
       const totalPoints =
         health_points + attack_points + defense_points + speed_points + critical_points;
 
       if (totalPoints > char.statusPoints) {
-        return res.status(400).json({
-          success: false,
-          error: 'Not enough status points available',
-        });
+        return sendBadRequest(res, 'Not enough status points available');
       }
 
       // Update character stats
@@ -322,17 +274,10 @@ router.post(
         },
       });
 
-      res.json({
-        success: true,
-        data: updatedCharacter,
-        message: 'Stats allocated successfully',
-      });
+      sendSuccess(res, updatedCharacter, 'Stats allocated successfully');
     } catch (error) {
       console.error('Allocate stats error:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Internal server error',
-      });
+      sendInternalError(res, 'Failed to allocate stats');
     }
   }
 );

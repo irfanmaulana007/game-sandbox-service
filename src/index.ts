@@ -10,6 +10,7 @@ import authRoutes from './routes/auth';
 import battleRoutes from './routes/battle';
 import characterRoutes from './routes/characters';
 import equipmentRoutes from './routes/equipment';
+import exampleRoutes from './routes/example';
 import inventoryRoutes from './routes/inventory';
 import mapRoutes from './routes/maps';
 import monsterRoutes from './routes/monsters';
@@ -71,12 +72,15 @@ app.use('/api/monsters', monsterRoutes);
 app.use('/api/maps', mapRoutes);
 app.use('/api/battle', battleRoutes);
 app.use('/api/inventory', inventoryRoutes);
+app.use('/api/examples', exampleRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
-    error: 'Route not found',
-    path: req.originalUrl,
+    success: false,
+    message: 'Route not found',
+    errorStatus: 404,
+    data: { path: req.originalUrl },
   });
 });
 
@@ -84,8 +88,9 @@ app.use('*', (req, res) => {
 app.use((err: Error, req: express.Request, res: express.Response) => {
   console.error('Global error handler:', err);
   res.status(500).json({
-    error: 'Internal server error',
+    success: false,
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+    errorStatus: 500,
   });
 });
 
