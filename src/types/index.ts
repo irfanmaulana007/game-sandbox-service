@@ -202,6 +202,15 @@ export interface ExperienceLevel {
   experience: number;
 }
 
+export interface CreateExperienceLevelRequest {
+  level: number;
+  experience: number;
+}
+
+export interface UpdateExperienceLevelRequest {
+  experience: number;
+}
+
 // API Response types - Legacy (deprecated, use response utility instead)
 export interface ApiResponse<T = any> {
   success: boolean;

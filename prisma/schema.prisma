@@ -211,6 +211,15 @@ model BattleLog {
   @@map("battle_logs")
 }
 
+model ExperienceLevel {
+  id         Int      @id @default(autoincrement())
+  level      Int      @unique
+  experience Int
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("experience_levels")
+}
+
 // Enums
 enum EquipmentType {
   weapon

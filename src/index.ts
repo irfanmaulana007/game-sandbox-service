@@ -11,6 +11,7 @@ import battleRoutes from './routes/battle';
 import characterRoutes from './routes/characters';
 import equipmentRoutes from './routes/equipment';
 import exampleRoutes from './routes/example';
+import experienceRoutes from './routes/experience';
 import inventoryRoutes from './routes/inventory';
 import mapRoutes from './routes/maps';
 import monsterRoutes from './routes/monsters';
@@ -68,6 +69,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
 app.use('/api/equipment', equipmentRoutes);
+app.use('/api/experience', experienceRoutes);
 app.use('/api/monsters', monsterRoutes);
 app.use('/api/maps', mapRoutes);
 app.use('/api/battle', battleRoutes);
