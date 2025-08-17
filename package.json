@@ -12,7 +12,7 @@
     "types:prepare": "echo 'Use npm run types:generate instead'",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:seed": "ts-node src/database/faker-seeder.ts",
+    "db:seed": "ts-node prisma/seed.ts",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
     "postman:generate": "node postman-collection-generator.js",
