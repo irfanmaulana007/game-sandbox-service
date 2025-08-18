@@ -15,14 +15,4 @@ router.get('/:id', validateNumericIdParam, (req: Request, res: Response) =>
   mapsController.getMapById(req, res)
 );
 
-// Get maps by difficulty
-router.get('/difficulty/:difficulty', validatePagination, (req: Request, res: Response) =>
-  mapsController.getMapsByDifficulty(req, res)
-);
-
-// Get maps by level range
-router.get('/level/:minLevel', validatePagination, (req: Request, res: Response) =>
-  mapsController.getMapsByLevelRange(req, res)
-);
-
 export default router;

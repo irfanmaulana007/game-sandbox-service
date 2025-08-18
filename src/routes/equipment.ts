@@ -15,14 +15,4 @@ router.get('/:id', validateNumericIdParam, (req: Request, res: Response) =>
   equipmentController.getEquipmentById(req, res)
 );
 
-// Get equipment by type
-router.get('/type/:type', validatePagination, (req: Request, res: Response) =>
-  equipmentController.getEquipmentByType(req, res)
-);
-
-// Get equipment by rarity
-router.get('/rarity/:rarity', validatePagination, (req: Request, res: Response) =>
-  equipmentController.getEquipmentByRarity(req, res)
-);
-
 export default router;

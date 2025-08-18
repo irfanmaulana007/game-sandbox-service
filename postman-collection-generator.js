@@ -360,11 +360,11 @@ const equipmentEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/equipment?page=1&limit=20',
+        raw: '/api/equipment?page=1&limit=10',
         path: ['api', 'equipment'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -388,11 +388,11 @@ const equipmentEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/equipment/type/weapon?page=1&limit=20',
+        raw: '/api/equipment/type/weapon?page=1&limit=10',
         path: ['api', 'equipment', 'type', 'weapon'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -404,11 +404,11 @@ const equipmentEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/equipment/rarity/rare?page=1&limit=20',
+        raw: '/api/equipment/rarity/rare?page=1&limit=10',
         path: ['api', 'equipment', 'rarity', 'rare'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -423,11 +423,11 @@ const monsterEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/monsters?page=1&limit=20',
+        raw: '/api/monsters?page=1&limit=10',
         path: ['api', 'monsters'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -451,11 +451,11 @@ const monsterEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/monsters/map/1?page=1&limit=20',
+        raw: '/api/monsters/map/1?page=1&limit=10',
         path: ['api', 'monsters', 'map', '1'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -467,11 +467,11 @@ const monsterEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/monsters/rank/elite?page=1&limit=20',
+        raw: '/api/monsters/rank/elite?page=1&limit=10',
         path: ['api', 'monsters', 'rank', 'elite'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -486,11 +486,11 @@ const mapEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/maps?page=1&limit=20',
+        raw: '/api/maps?page=1&limit=10',
         path: ['api', 'maps'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -514,11 +514,11 @@ const mapEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/maps/difficulty/easy?page=1&limit=20',
+        raw: '/api/maps/difficulty/easy?page=1&limit=10',
         path: ['api', 'maps', 'difficulty', 'easy'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -530,11 +530,11 @@ const mapEndpoints = [
     {
       method: 'GET',
       url: {
-        raw: '/api/maps/level/10?page=1&limit=20',
+        raw: '/api/maps/level/10?page=1&limit=10',
         path: ['api', 'maps', 'level', '10'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },
@@ -606,11 +606,11 @@ const battleEndpoints = [
         },
       ],
       url: {
-        raw: '/api/battle/character/{{character_id}}?page=1&limit=20',
+        raw: '/api/battle/character/{{character_id}}?page=1&limit=10',
         path: ['api', 'battle', 'character', '{{character_id}}'],
         query: [
           { key: 'page', value: '1' },
-          { key: 'limit', value: '20' },
+          { key: 'limit', value: '10' },
         ],
       },
     },

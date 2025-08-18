@@ -18,7 +18,7 @@ export class MonstersController {
   async getMonsters(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 10;
       const level = req.query.level ? parseInt(req.query.level as string) : undefined;
       const mapId = req.query.mapId ? parseInt(req.query.mapId as string) : undefined;
       const rank = req.query.rank as MonsterRank;
@@ -55,7 +55,7 @@ export class MonstersController {
     try {
       const { mapId } = req.params;
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 10;
 
       const result = await this.monstersService.getMonstersByMap(Number(mapId), page, limit);
 
@@ -71,7 +71,7 @@ export class MonstersController {
     try {
       const rank = req.query.rank as MonsterRank;
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 10;
 
       const result = await this.monstersService.getMonstersByRank(rank, page, limit);
 

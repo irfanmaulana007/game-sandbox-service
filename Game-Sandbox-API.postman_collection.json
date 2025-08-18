@@ -508,7 +508,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/equipment?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/equipment?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -545,7 +545,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/equipment/type/weapon?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/equipment/type/weapon?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -565,7 +565,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/equipment/rarity/rare?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/equipment/rarity/rare?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -591,7 +591,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/monsters?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/monsters?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -628,7 +628,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/monsters/map/1?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/monsters/map/1?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -648,7 +648,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/monsters/rank/elite?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/monsters/rank/elite?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -674,7 +674,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/maps?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/maps?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -711,7 +711,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/maps/difficulty/easy?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/maps/difficulty/easy?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -731,7 +731,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{BASE_URL}}/api/maps/level/10?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/maps/level/10?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],
@@ -855,7 +855,7 @@
               }
             ],
             "url": {
-              "raw": "{{BASE_URL}}/api/battle/character/{{character_id}}?page=1&limit=20",
+              "raw": "{{BASE_URL}}/api/battle/character/{{character_id}}?page=1&limit=10",
               "host": [
                 "{{BASE_URL}}"
               ],

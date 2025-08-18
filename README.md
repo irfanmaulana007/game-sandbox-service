@@ -354,7 +354,7 @@ The API follows RESTful conventions with consistent response formats:
   "data": [...],
   "pagination": {
     "page": 1,
-    "limit": 20,
+    "limit": 10,
     "total": 100,
     "totalPages": 5
   }

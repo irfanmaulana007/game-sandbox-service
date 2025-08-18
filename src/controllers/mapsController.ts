@@ -18,7 +18,7 @@ export class MapsController {
   async getMaps(req: Request, res: Response) {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 10;
       const difficulty = req.query.difficulty as MapDifficulty;
       const minLevel = req.query.minLevel ? parseInt(req.query.minLevel as string) : undefined;
       const maxLevel = req.query.maxLevel ? parseInt(req.query.maxLevel as string) : undefined;
@@ -46,38 +46,6 @@ export class MapsController {
       }
 
       console.error('Get map error:', error);
-
-      return sendInternalError(res, 'Internal server error');
-    }
-  }
-
-  async getMapsByDifficulty(req: Request, res: Response) {
-    try {
-      const difficulty = req.query.difficulty as MapDifficulty;
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
-
-      const result = await this.mapsService.getMapsByDifficulty(difficulty, page, limit);
-
-      return sendSuccessWithPagination(res, result.maps, result.pagination.total, page, limit);
-    } catch (error) {
-      console.error('Get maps by difficulty error:', error);
-
-      return sendInternalError(res, 'Internal server error');
-    }
-  }
-
-  async getMapsByLevelRange(req: Request, res: Response) {
-    try {
-      const { minLevel } = req.params;
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 20;
-
-      const result = await this.mapsService.getMapsByLevelRange(Number(minLevel), page, limit);
-
-      return sendSuccessWithPagination(res, result.maps, result.pagination.total, page, limit);
-    } catch (error) {
-      console.error('Get maps by level error:', error);
 
       return sendInternalError(res, 'Internal server error');
     }
