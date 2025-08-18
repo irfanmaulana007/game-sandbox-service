@@ -1,13 +1,23 @@
-import type { Character, Monster, MonsterDetails } from '@prisma/client';
+import {
+  BattleLogDetailType,
+  type Character,
+  type Monster,
+  type MonsterDetails,
+} from '@prisma/client';
 import { prisma } from '~/database/prisma';
 import type { BattleEntity, BattleRequest, BattleResponse, BattleResult } from '~/types';
+import { CharacterService } from './characterService';
+
+const characterService = new CharacterService();
 
 export class BattleService {
   async startBattle(userId: string, battleData: BattleRequest): Promise<BattleResponse> {
+    // Restore character health
+    await characterService.restCharacter(battleData.character_id, userId);
+
     const { character_id, monster_id } = battleData;
 
-    console.log('🚀 ~ BattleService ~ startBattle ~ monster_id:', monster_id);
-    console.log('🚀 ~ BattleService ~ startBattle ~ character_id:', character_id);
+    const battleLogs: { type: BattleLogDetailType; message: string }[] = [];
 
     // Get character and monster data
     const [character, monster] = await Promise.all([
@@ -30,8 +40,16 @@ export class BattleService {
       throw new Error('Character does not belong to user');
     }
 
+    battleLogs.push({
+      type: BattleLogDetailType.information,
+      message: `Starting battle with ${monster.monster_detail.name}`,
+    });
+
+    // Prepare battle
+    await this.battlePreparation(character, battleLogs);
+
     // Simulate battle
-    const battleResult = this.simulateBattle(character, monster);
+    const battleResult = this.simulateBattle(character, monster, battleLogs);
 
     // Create battle log
     const battleLog = await prisma.battleLog.create({
@@ -48,9 +66,10 @@ export class BattleService {
     });
 
     await prisma.battleLogDetails.createMany({
-      data: battleResult.battleLogDetails.map(detail => ({
+      data: battleLogs.map(log => ({
         battle_log_id: battleLog.id,
-        details: detail,
+        type: log.type,
+        message: log.message,
       })),
     });
 
@@ -199,9 +218,40 @@ export class BattleService {
     return turns;
   }
 
+  private async battlePreparation(
+    character: Character,
+    battleLogs: { type: BattleLogDetailType; message: string }[]
+  ) {
+    const healthToRestore = character.max_health * 0.1;
+    let healthRestored = character.health + healthToRestore;
+
+    if (healthRestored > character.max_health) {
+      healthRestored = character.max_health;
+    }
+
+    if (healthRestored !== character.max_health) {
+      battleLogs.push({
+        type: BattleLogDetailType.information,
+        message: `${character.name} rested and restored ${healthToRestore} health.`,
+      });
+      await prisma.character.update({
+        where: { id: character.id },
+        data: {
+          health: healthRestored,
+        },
+      });
+    }
+
+    battleLogs.push({
+      type: BattleLogDetailType.information,
+      message: `${character.name} current health: ${healthRestored}`,
+    });
+  }
+
   private simulateBattle(
     character: Character,
-    monster: Monster & { monster_detail: MonsterDetails }
+    monster: Monster & { monster_detail: MonsterDetails },
+    battleLogs: { type: BattleLogDetailType; message: string }[]
   ): {
     result: 'victory' | 'defeat';
     characterHealthRemaining: number;
@@ -209,9 +259,7 @@ export class BattleService {
     turnsTaken: number;
     experienceGained: number;
     goldGained: number;
-    battleLogDetails: string[];
   } {
-    const battleLogDetails: string[] = [];
     let characterHealth = character.health;
     let monsterHealth = monster.health;
     let turnsTaken = 0;
@@ -248,9 +296,10 @@ export class BattleService {
         const damage = this.calculateDamage(characterBattleEntity, monsterBattleEntity);
 
         monsterHealth = Math.max(0, monsterHealth - damage.damage);
-        battleLogDetails.push(
-          `${character.name} attacks ${monster.monster_detail.name} for ${damage.damage} damage ${damage.isCritical ? 'CRITICALLY' : ''}. ${monster.health} health remaining.`
-        );
+        battleLogs.push({
+          type: BattleLogDetailType.damage_dealt,
+          message: `${character.name} attacks ${monster.monster_detail.name} for ${damage.damage} damage ${damage.isCritical ? 'CRITICALLY' : ''}. ${monsterHealth} health remaining.`,
+        });
 
         if (monsterHealth <= 0) break;
       } else {
@@ -258,9 +307,10 @@ export class BattleService {
         const monsterDamage = this.calculateDamage(monsterBattleEntity, characterBattleEntity);
 
         characterHealth = Math.max(0, characterHealth - monsterDamage.damage);
-        battleLogDetails.push(
-          `${monster.monster_detail.name} attacks ${character.name} for ${monsterDamage.damage} damage ${monsterDamage.isCritical ? 'CRITICALLY' : ''}. ${character.health} health remaining.`
-        );
+        battleLogs.push({
+          type: BattleLogDetailType.damage_received,
+          message: `${monster.monster_detail.name} attacks ${character.name} for ${monsterDamage.damage} damage ${monsterDamage.isCritical ? 'CRITICALLY' : ''}. ${characterHealth} health remaining.`,
+        });
 
         if (characterHealth <= 0) break;
       }
@@ -271,6 +321,31 @@ export class BattleService {
     const experienceGained = result === 'victory' ? monster.experience_reward : 0;
     const goldGained = result === 'victory' ? monster.gold_reward : 0;
 
+    battleLogs.push({
+      type: BattleLogDetailType.information,
+      message: `${character.name} health: ${characterHealth}`,
+    });
+    battleLogs.push({
+      type: BattleLogDetailType.information,
+      message: `${monster.monster_detail.name} health: ${monsterHealth}`,
+    });
+
+    if (result === 'victory') {
+      battleLogs.push({
+        type: BattleLogDetailType.reward,
+        message: `${character.name} experience gained: ${experienceGained}`,
+      });
+      battleLogs.push({
+        type: BattleLogDetailType.reward,
+        message: `${monster.monster_detail.name} gold gained: ${goldGained}`,
+      });
+    }
+
+    battleLogs.push({
+      type: BattleLogDetailType.information,
+      message: `The winner is ${result === 'victory' ? character.name : monster.monster_detail.name}`,
+    });
+
     return {
       result,
       characterHealthRemaining: characterHealth,
@@ -278,7 +353,6 @@ export class BattleService {
       turnsTaken,
       experienceGained,
       goldGained,
-      battleLogDetails,
     };
   }
 

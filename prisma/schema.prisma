@@ -226,11 +226,19 @@ model BattleLog {
   @@map("battle_logs")
 }
 
+enum BattleLogDetailType {
+  information
+  damage_dealt
+  damage_received
+  reward
+}
+
 model BattleLogDetails {
-  id            String   @id @default(cuid())
+  id            String              @id @default(cuid())
   battle_log_id String
-  details       Json?
-  created_at    DateTime @default(now())
+  message       String
+  type          BattleLogDetailType
+  created_at    DateTime            @default(now())
 
   // Relations
   battleLog BattleLog @relation(fields: [battle_log_id], references: [id], onDelete: Cascade)
