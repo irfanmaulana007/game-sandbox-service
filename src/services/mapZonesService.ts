@@ -14,7 +14,7 @@ export class MapZonesService {
         include: {
           map: true,
           _count: {
-            select: { monsters: true },
+            select: { monsters_details: true },
           },
         },
         skip,
@@ -42,13 +42,9 @@ export class MapZonesService {
       where: { id },
       include: {
         map: true,
-        monsters: {
+        monsters_details: {
           include: {
-            monsters: {
-              include: {
-                monster_detail: true,
-              },
-            },
+            monsters: true,
           },
         },
       },
@@ -129,7 +125,7 @@ export class MapZonesService {
       where: { map_id: mapId },
       include: {
         _count: {
-          select: { monsters: true },
+          select: { monsters_details: true },
         },
       },
       orderBy: { id: 'asc' },

@@ -163,8 +163,8 @@ model GameMapZone {
   created_at  DateTime @default(now())
 
   // Relations
-  map      GameMap          @relation(fields: [map_id], references: [id])
-  monsters MonsterDetails[]
+  map              GameMap          @relation(fields: [map_id], references: [id])
+  monsters_details MonsterDetails[]
 
   @@map("map_zones")
 }
@@ -187,7 +187,7 @@ model MonsterDetails {
 
 model Monster {
   id                Int         @id @default(autoincrement())
-  monster_detail_id Int         @unique
+  monster_detail_id Int
   rank              MonsterRank
   level             Int         @default(1)
   health            Int
