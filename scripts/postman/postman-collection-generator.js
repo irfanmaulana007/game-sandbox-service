@@ -158,8 +158,8 @@ const authEndpoints = [
         mode: 'raw',
         raw: JSON.stringify(
           {
-            username: 'testuser',
-            password: 'password123',
+            username: 'irfanmaulana007',
+            password: 'asd123',
           },
           null,
           2

@@ -4,6 +4,7 @@ import {
   type Monster,
   type MonsterDetails,
 } from '@prisma/client';
+import type { JsonValue } from '@prisma/client/runtime/library';
 import { prisma } from '~/database/prisma';
 import type { BattleEntity, BattleRequest, BattleResponse, BattleResult } from '~/types';
 import { CharacterService } from './characterService';
@@ -15,24 +16,18 @@ export class BattleService {
     // Restore character health
     await characterService.restCharacter(battleData.character_id, userId);
 
-    const { character_id, monster_id } = battleData;
+    const { character_id, map_zone_id } = battleData;
 
     const battleLogs: { type: BattleLogDetailType; message: string }[] = [];
 
-    // Get character and monster data
-    const [character, monster] = await Promise.all([
-      prisma.character.findUnique({
-        where: { id: character_id },
-        include: { job: true },
-      }),
-      prisma.monster.findUnique({
-        where: { id: monster_id },
-        include: { monster_detail: true },
-      }),
-    ]);
+    // Get character data
+    const character = await prisma.character.findUnique({
+      where: { id: character_id },
+      include: { job: true },
+    });
 
-    if (!character || !monster) {
-      throw new Error('Character or monster not found');
+    if (!character) {
+      throw new Error('Character not found');
     }
 
     // Check if character belongs to user
@@ -40,22 +35,45 @@ export class BattleService {
       throw new Error('Character does not belong to user');
     }
 
+    // Get map zone and its monsters
+    const mapZone = await prisma.gameMapZone.findUnique({
+      where: { id: map_zone_id },
+      include: {
+        monsters_details: {
+          include: {
+            monsters: true,
+          },
+        },
+      },
+    });
+
+    if (!mapZone) {
+      throw new Error('Map zone not found');
+    }
+
+    // Randomize monster selection based on rank probability
+    const selectedMonster = this.selectRandomMonster(mapZone.monsters_details);
+
+    if (!selectedMonster) {
+      throw new Error('No monsters available in this map zone');
+    }
+
     battleLogs.push({
       type: BattleLogDetailType.information,
-      message: `Starting battle with ${monster.monster_detail.name}`,
+      message: `Starting battle with ${selectedMonster.monster_detail.name} (${selectedMonster.rank})`,
     });
 
     // Prepare battle
     await this.battlePreparation(character, battleLogs);
 
     // Simulate battle
-    const battleResult = this.simulateBattle(character, monster, battleLogs);
+    const battleResult = this.simulateBattle(character, selectedMonster, battleLogs);
 
     // Create battle log
     const battleLog = await prisma.battleLog.create({
       data: {
         character_id,
-        monster_id,
+        monster_id: selectedMonster.id,
         battleResult: battleResult.result,
         character_health_remaining: battleResult.characterHealthRemaining,
         monster_health_remaining: battleResult.monsterHealthRemaining,
@@ -93,7 +111,86 @@ export class BattleService {
       experienceGained: battleResult.experienceGained,
       goldGained: battleResult.goldGained,
       levelGained: isCharacterGainedLevel,
+      monster: selectedMonster,
     };
+  }
+
+  private selectRandomMonster(
+    monsterDetails: Array<{
+      id: number;
+      name: string;
+      description: string | null;
+      image_url: string | null;
+      drop_table: JsonValue;
+      created_at: Date;
+      monsters: Array<{
+        id: number;
+        monster_detail_id: number;
+        rank: 'normal' | 'elite' | 'boss' | 'legendary';
+        level: number;
+        health: number;
+        attack: number;
+        defense: number;
+        speed: number;
+        critical: number;
+        experience_reward: number;
+        gold_reward: number;
+        created_at: Date;
+      }>;
+    }>
+  ): (Monster & { monster_detail: MonsterDetails }) | null {
+    // Flatten all monsters from all monster details
+    const allMonsters: Array<Monster & { monster_detail: MonsterDetails }> = [];
+
+    for (const monsterDetail of monsterDetails) {
+      for (const monster of monsterDetail.monsters) {
+        allMonsters.push({
+          ...monster,
+          monster_detail: {
+            id: monsterDetail.id,
+            name: monsterDetail.name,
+            description: monsterDetail.description || '',
+            image_url: monsterDetail.image_url || '',
+            drop_table: monsterDetail.drop_table as JsonValue,
+            created_at: monsterDetail.created_at,
+            map_zone_id: null,
+          },
+        });
+      }
+    }
+
+    if (allMonsters.length === 0) {
+      return null;
+    }
+
+    // Define probability weights based on monster rank
+    const rankWeights: Record<string, number> = {
+      normal: 100, // 100% base probability
+      elite: 45, // 45% of normal probability
+      boss: 20, // 20% of normal probability
+      legendary: 5, // 5% of normal probability
+    };
+
+    // Calculate total weight
+    const totalWeight = allMonsters.reduce((sum, monster) => {
+      return sum + rankWeights[monster.rank];
+    }, 0);
+
+    // Generate random number
+    const random = Math.random() * totalWeight;
+
+    // Select monster based on weighted probability
+    let currentWeight = 0;
+
+    for (const monster of allMonsters) {
+      currentWeight += rankWeights[monster.rank];
+      if (random <= currentWeight) {
+        return monster;
+      }
+    }
+
+    // Fallback to last monster (shouldn't reach here)
+    return allMonsters[allMonsters.length - 1];
   }
 
   async getBattleById(id: string, userId: string) {

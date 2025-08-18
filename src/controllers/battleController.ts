@@ -28,11 +28,16 @@ export class BattleController {
       return sendSuccess(res, result);
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message === 'Character or monster not found') {
-          return res.status(404).json({
-            success: false,
-            error: error.message,
-          });
+        if (error.message === 'Character not found') {
+          return sendNotFound(res, error.message);
+        }
+
+        if (error.message === 'Map zone not found') {
+          return sendNotFound(res, error.message);
+        }
+
+        if (error.message === 'No monsters available in this map zone') {
+          return sendNotFound(res, error.message);
         }
 
         if (error.message === 'Character does not belong to user') {

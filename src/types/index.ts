@@ -185,8 +185,28 @@ export interface MonsterDetails {
   created_at: Date;
 }
 
-export interface MonsterWithDetails extends Monster {
-  details: MonsterDetails;
+export interface MonsterWithDetails {
+  id: number;
+  monster_detail_id: number;
+  rank: 'normal' | 'elite' | 'boss' | 'legendary';
+  level: number;
+  health: number;
+  attack: number;
+  defense: number;
+  speed: number;
+  critical: number;
+  experience_reward: number;
+  gold_reward: number;
+  created_at: Date;
+  monster_detail: {
+    id: number;
+    name: string;
+    description: string | null;
+    image_url: string | null;
+    drop_table: unknown;
+    created_at: Date;
+    map_zone_id: number | null;
+  };
 }
 
 // Battle types
@@ -219,7 +239,7 @@ export interface BattleLog {
 
 export interface BattleRequest {
   character_id: string;
-  monster_id: number;
+  map_zone_id: number;
 }
 
 export interface BattleResponse {
@@ -228,6 +248,7 @@ export interface BattleResponse {
   experienceGained: number;
   goldGained: number;
   levelGained: boolean;
+  monster: MonsterWithDetails;
 }
 
 // Experience and leveling

@@ -86,7 +86,7 @@ export const validateBattleRequest = [
 
     return true;
   }),
-  body('monster_id').isInt({ min: 1 }).withMessage('Monster ID must be a positive integer'),
+  body('map_zone_id').isInt({ min: 1 }).withMessage('Map Zone ID must be a positive integer'),
   handleValidationErrors,
 ];
 
