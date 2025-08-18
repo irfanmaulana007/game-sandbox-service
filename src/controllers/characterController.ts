@@ -206,4 +206,24 @@ export class CharacterController {
       sendInternalError(res, 'Failed to rest character');
     }
   }
+
+  async resetCharacterStatusPoints(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return sendUnauthorized(res, 'User not authenticated');
+      }
+
+      const character = await this.characterService.getCharacterByUserId(req.user.userId);
+
+      const updatedCharacter = await this.characterService.resetCharacterStatusPoints(
+        character.id,
+        req.user.userId
+      );
+
+      sendSuccess(res, updatedCharacter, 'Character status points reset successfully');
+    } catch (error) {
+      console.error('Reset character status points error:', error);
+      sendInternalError(res, 'Failed to reset character status points');
+    }
+  }
 }

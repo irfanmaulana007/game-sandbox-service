@@ -45,6 +45,11 @@ router.post('/me/rest', authenticateToken, (req: AuthRequest, res: Response) =>
   characterController.restCharacter(req, res)
 );
 
+// Reset character status points
+router.post('/me/reset-status-points', authenticateToken, (req: AuthRequest, res: Response) =>
+  characterController.resetCharacterStatusPoints(req, res)
+);
+
 // Allocate status points
 router.post(
   '/:id/allocate-stats',

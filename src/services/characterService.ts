@@ -1,5 +1,5 @@
 import { prisma } from '~/database/prisma';
-import type { AllocateStatsRequest, CreateCharacterRequest } from '~/types';
+import type { AllocateStatsRequest, Character, CreateCharacterRequest } from '~/types';
 
 export class CharacterService {
   async getCharactersByUserId(userId: string, page: number, limit: number) {
@@ -192,6 +192,56 @@ export class CharacterService {
       where: { id },
       data: {
         health: character.max_health,
+      },
+    });
+
+    return updatedCharacter;
+  }
+
+  private async calculateStatusPoints(character: Character) {
+    const baseJob = await prisma.jobClass.findUnique({
+      where: { id: character.job_id },
+    });
+
+    if (!baseJob) {
+      throw new Error('Job class not found');
+    }
+
+    const statusPoints =
+      character.health / 10 +
+      character.attack +
+      character.defense +
+      character.speed +
+      character.critical;
+
+    const baseStatusPoints =
+      baseJob.base_health / 10 +
+      baseJob.base_attack +
+      baseJob.base_defense +
+      baseJob.base_speed +
+      baseJob.base_critical;
+
+    return statusPoints - baseStatusPoints + character.status_points;
+  }
+
+  async resetCharacterStatusPoints(id: string, userId: string) {
+    const character = await this.getCharacterById(id, userId);
+    const statusPoints = await this.calculateStatusPoints(character);
+
+    if (!character) {
+      throw new Error('Character not found');
+    }
+
+    const updatedCharacter = await prisma.character.update({
+      where: { id },
+      data: {
+        status_points: statusPoints,
+        health: character.job.base_health,
+        max_health: character.job.base_health,
+        attack: character.job.base_attack,
+        defense: character.job.base_defense,
+        speed: character.job.base_speed,
+        critical: character.job.base_critical,
       },
     });
 
