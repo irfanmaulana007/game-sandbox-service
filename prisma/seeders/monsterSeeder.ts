@@ -206,7 +206,7 @@ export class MonsterSeeder {
   }
 
   private calculateTotalAttributePoints(level: number, rankMultiplier: number): number {
-    const baseAttributePoints = 30 + level * 5;
+    const baseAttributePoints = 40 + level * 10;
     const baseTotalPoints = Math.floor(baseAttributePoints * rankMultiplier);
 
     const minTotalPoints = Math.floor(baseTotalPoints * (1 - this.totalVariation));

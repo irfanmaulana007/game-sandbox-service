@@ -92,7 +92,7 @@ export class BattleService {
       },
     });
 
-    const isCharacterGainedLevel = await this.checkIfCharacterGainedLevel(character_id);
+    let isCharacterGainedLevel = false;
 
     // Update character stats if victory
     if (battleResult.result === 'victory') {
@@ -105,23 +105,10 @@ export class BattleService {
         },
       });
 
-      console.log(
-        '🚀 ~ BattleService ~ startBattle ~ isCharacterGainedLevel:',
-        isCharacterGainedLevel
-      );
+      isCharacterGainedLevel = await this.checkIfCharacterGainedLevel(character_id);
+
       if (isCharacterGainedLevel) {
-        await prisma.character.update({
-          where: { id: character_id },
-          data: {
-            level: character.level + 1,
-            status_points: character.status_points + 1,
-            max_health: character.max_health + character.job.health_per_level,
-            attack: character.attack + character.job.attack_per_level,
-            defense: character.defense + character.job.defense_per_level,
-            speed: character.speed + character.job.speed_per_level,
-            critical: character.critical + character.job.critical_per_level,
-          },
-        });
+        await characterService.levelupCharacter(character_id);
       }
     }
 
@@ -415,7 +402,7 @@ export class BattleService {
         monsterHealth = Math.max(0, monsterHealth - damage.damage);
         battleLogs.push({
           type: BattleLogDetailType.damage_dealt,
-          message: `${character.name} attacks ${monster.monster_detail.name} for ${damage.damage} damage ${damage.isCritical ? 'CRITICALLY' : ''}. ${monsterHealth} health remaining.`,
+          message: `${character.name} attacks ${monster.monster_detail.name} for ${damage.damage} damage${damage.isCritical ? ' CRITICALLY' : ''}. ${monsterHealth} health remaining.`,
         });
 
         if (monsterHealth <= 0) break;
@@ -426,7 +413,7 @@ export class BattleService {
         characterHealth = Math.max(0, characterHealth - monsterDamage.damage);
         battleLogs.push({
           type: BattleLogDetailType.damage_received,
-          message: `${monster.monster_detail.name} attacks ${character.name} for ${monsterDamage.damage} damage ${monsterDamage.isCritical ? 'CRITICALLY' : ''}. ${characterHealth} health remaining.`,
+          message: `${monster.monster_detail.name} attacks ${character.name} for ${monsterDamage.damage} damage${monsterDamage.isCritical ? ' CRITICALLY' : ''}. ${characterHealth} health remaining.`,
         });
 
         if (characterHealth <= 0) break;

@@ -221,12 +221,31 @@ export class CharacterService {
       baseJob.base_speed +
       baseJob.base_critical;
 
-    return statusPoints - baseStatusPoints + character.status_points;
+    const totalBonusStatusPointPerLevel =
+      baseJob.health_per_level / 10 +
+      baseJob.attack_per_level +
+      baseJob.defense_per_level +
+      baseJob.speed_per_level +
+      baseJob.critical_per_level;
+
+    console.log(
+      '🚀 ~ CharacterService ~ calculateStatusPoints ~ totalBonusStatusPointPerLevel:',
+      totalBonusStatusPointPerLevel
+    );
+
+    return (
+      statusPoints -
+      baseStatusPoints +
+      character.status_points -
+      totalBonusStatusPointPerLevel * character.level
+    );
   }
 
   async resetCharacterStatusPoints(id: string, userId: string) {
     const character = await this.getCharacterById(id, userId);
     const statusPoints = await this.calculateStatusPoints(character);
+
+    console.log('🚀 ~ CharacterService ~ resetCharacterStatusPoints ~ statusPoints:', statusPoints);
 
     if (!character) {
       throw new Error('Character not found');
@@ -236,15 +255,41 @@ export class CharacterService {
       where: { id },
       data: {
         status_points: statusPoints,
-        health: character.job.base_health,
-        max_health: character.job.base_health,
-        attack: character.job.base_attack,
-        defense: character.job.base_defense,
-        speed: character.job.base_speed,
-        critical: character.job.base_critical,
+        health: character.job.base_health + character.job.health_per_level * character.level,
+        max_health: character.job.base_health + character.job.health_per_level * character.level,
+        attack: character.job.base_attack + character.job.attack_per_level * character.level,
+        defense: character.job.base_defense + character.job.defense_per_level * character.level,
+        speed: character.job.base_speed + character.job.speed_per_level * character.level,
+        critical: character.job.base_critical + character.job.critical_per_level * character.level,
       },
     });
 
     return updatedCharacter;
+  }
+
+  async levelupCharacter(character_id: string) {
+    const character = await prisma.character.findUnique({
+      where: { id: character_id },
+      include: {
+        job: true,
+      },
+    });
+
+    if (!character) {
+      throw new Error('Character not found');
+    }
+
+    await prisma.character.update({
+      where: { id: character_id },
+      data: {
+        level: character.level + 1,
+        status_points: character.status_points + 1,
+        max_health: character.max_health + character.job.health_per_level,
+        attack: character.attack + character.job.attack_per_level,
+        defense: character.defense + character.job.defense_per_level,
+        speed: character.speed + character.job.speed_per_level,
+        critical: character.critical + character.job.critical_per_level,
+      },
+    });
   }
 }
