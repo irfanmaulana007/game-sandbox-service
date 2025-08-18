@@ -1,3 +1,5 @@
+import type { BattleLogDetails } from '@prisma/client';
+
 // User types
 export interface User {
   id: string;
@@ -235,6 +237,7 @@ export interface BattleLog {
   experience_gained: number;
   gold_gained: number;
   battle_date: Date;
+  battleLogDetails: BattleLogDetails[];
 }
 
 export interface BattleRequest {

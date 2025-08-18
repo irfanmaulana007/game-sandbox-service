@@ -80,16 +80,19 @@ export class BattleService {
         turns_taken: battleResult.turnsTaken,
         experience_gained: battleResult.experienceGained,
         gold_gained: battleResult.goldGained,
+        battleLogDetails: {
+          create: battleLogs.map(log => ({
+            type: log.type,
+            message: log.message,
+          })),
+        },
+      },
+      include: {
+        battleLogDetails: true,
       },
     });
 
-    await prisma.battleLogDetails.createMany({
-      data: battleLogs.map(log => ({
-        battle_log_id: battleLog.id,
-        type: log.type,
-        message: log.message,
-      })),
-    });
+    const isCharacterGainedLevel = await this.checkIfCharacterGainedLevel(character_id);
 
     // Update character stats if victory
     if (battleResult.result === 'victory') {
@@ -101,9 +104,26 @@ export class BattleService {
           health: battleResult.characterHealthRemaining,
         },
       });
-    }
 
-    const isCharacterGainedLevel = await this.checkIfCharacterGainedLevel(character_id);
+      console.log(
+        '🚀 ~ BattleService ~ startBattle ~ isCharacterGainedLevel:',
+        isCharacterGainedLevel
+      );
+      if (isCharacterGainedLevel) {
+        await prisma.character.update({
+          where: { id: character_id },
+          data: {
+            level: character.level + 1,
+            status_points: character.status_points + 1,
+            max_health: character.max_health + character.job.health_per_level,
+            attack: character.attack + character.job.attack_per_level,
+            defense: character.defense + character.job.defense_per_level,
+            speed: character.speed + character.job.speed_per_level,
+            critical: character.critical + character.job.critical_per_level,
+          },
+        });
+      }
+    }
 
     return {
       battleLog,

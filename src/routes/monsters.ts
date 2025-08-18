@@ -15,6 +15,11 @@ router.get('/:id', validateNumericIdParam, (req: Request, res: Response) =>
   monstersController.getMonsterById(req, res)
 );
 
+// Get monster details by ID
+router.get('/monster-details/:id', validateNumericIdParam, (req: Request, res: Response) =>
+  monstersController.getMonsterDetailsById(req, res)
+);
+
 // Get monsters by map
 router.get(
   '/map/:mapId',

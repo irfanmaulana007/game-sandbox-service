@@ -51,6 +51,19 @@ export class MonstersController {
     }
   }
 
+  async getMonsterDetailsById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const monsterDetails = await this.monstersService.getMonsterDetailsById(Number(id));
+
+      return sendSuccess(res, monsterDetails);
+    } catch (error) {
+      console.error('Get monster details error:', error);
+
+      return sendInternalError(res, 'Internal server error');
+    }
+  }
+
   async getMonstersByMap(req: Request, res: Response) {
     try {
       const { mapId } = req.params;

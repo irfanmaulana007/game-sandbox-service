@@ -57,6 +57,21 @@ export class MonstersService {
     return monster;
   }
 
+  async getMonsterDetailsById(id: number) {
+    const monsterDetails = await prisma.monsterDetails.findUnique({
+      where: { id },
+      include: {
+        monsters: true,
+      },
+    });
+
+    if (!monsterDetails) {
+      throw new Error('Monster details not found');
+    }
+
+    return monsterDetails;
+  }
+
   async getMonstersByMap(mapId: number, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
