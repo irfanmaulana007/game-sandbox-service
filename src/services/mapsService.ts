@@ -47,18 +47,7 @@ export class MapsService {
       where: { id },
       include: {
         map_zones: {
-          include: {
-            monsters: {
-              include: {
-                monsters: {
-                  include: {
-                    monster_detail: true,
-                  },
-                },
-              },
-            },
-          },
-          orderBy: { id: 'asc' },
+          orderBy: { name: 'asc' },
         },
       },
     });

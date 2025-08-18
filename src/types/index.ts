@@ -132,6 +132,33 @@ export interface GameMap {
   created_at: Date;
 }
 
+export interface GameMapZone {
+  id: number;
+  map_id: number;
+  name: string;
+  description: string;
+  created_at: Date;
+}
+
+export interface GameMapZoneWithMap extends GameMapZone {
+  map: GameMap;
+}
+
+export interface GameMapZoneWithMonsters extends GameMapZone {
+  monsters: MonsterDetails[];
+}
+
+export interface CreateGameMapZoneRequest {
+  map_id: number;
+  name: string;
+  description?: string;
+}
+
+export interface UpdateGameMapZoneRequest {
+  name?: string;
+  description?: string;
+}
+
 // Monster types
 export interface Monster {
   id: number;

@@ -13,6 +13,7 @@ import equipmentRoutes from './routes/equipment';
 import experienceRoutes from './routes/experience';
 import inventoryRoutes from './routes/inventory';
 import mapRoutes from './routes/maps';
+import mapZonesRoutes from './routes/mapZones';
 import monsterRoutes from './routes/monsters';
 
 // Import database connection
@@ -71,6 +72,7 @@ app.use('/api/equipment', equipmentRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/monsters', monsterRoutes);
 app.use('/api/maps', mapRoutes);
+app.use('/api/map-zones', mapZonesRoutes);
 app.use('/api/battle', battleRoutes);
 app.use('/api/inventory', inventoryRoutes);
 

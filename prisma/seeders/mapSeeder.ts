@@ -391,7 +391,7 @@ export class MapSeeder {
       },
     };
 
-    await prisma.gameMap.create({
+    const startingMap = await prisma.gameMap.create({
       data: {
         name: 'Mt. Kembar',
         description: 'Mt. Kembar is a mountain in the mountains of Indonesia.',
@@ -399,6 +399,14 @@ export class MapSeeder {
         max_level: 5,
         difficulty: 'easy',
         background_image: 'easy_bg_1.jpg',
+      },
+    });
+
+    await prisma.gameMapZone.create({
+      data: {
+        map_id: startingMap.id,
+        name: 'Starting Zone',
+        description: 'This is the starting zone.',
       },
     });
 

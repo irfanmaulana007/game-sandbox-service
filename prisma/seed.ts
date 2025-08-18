@@ -11,7 +11,6 @@ import type { SeederConfig } from './seeders/config';
 import { defaultSeederConfig } from './seeders/config';
 
 export class FakerSeeder {
-  private config: SeederConfig;
   private userSeeder: UserSeeder;
   private jobClassSeeder: JobClassSeeder;
   private experienceLevelSeeder: ExperienceLevelSeeder;
@@ -21,7 +20,6 @@ export class FakerSeeder {
   private itemSeeder: ItemSeeder;
 
   constructor(config: SeederConfig = defaultSeederConfig) {
-    this.config = config;
     this.userSeeder = new UserSeeder();
     this.jobClassSeeder = new JobClassSeeder();
     this.experienceLevelSeeder = new ExperienceLevelSeeder();

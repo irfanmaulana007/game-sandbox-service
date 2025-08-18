@@ -511,6 +511,120 @@ const mapEndpoints = [
   ),
 ];
 
+// Map Zones endpoints (sorted: GET all, GET by ID, POST, PUT, DELETE, GET by map ID)
+const mapZonesEndpoints = [
+  createRequest(
+    'Get All Map Zones',
+    {
+      method: 'GET',
+      url: {
+        raw: '/api/map-zones?page=1&limit=10',
+        path: ['api', 'map-zones'],
+        query: [
+          { key: 'page', value: '1' },
+          { key: 'limit', value: '10' },
+        ],
+      },
+    },
+    'Get all map zones with pagination'
+  ),
+
+  createRequest(
+    'Get Map Zone by ID',
+    {
+      method: 'GET',
+      url: {
+        raw: '/api/map-zones/1',
+        path: ['api', 'map-zones', '1'],
+      },
+    },
+    'Get map zone details by ID'
+  ),
+
+  createRequest(
+    'Create Map Zone',
+    {
+      method: 'POST',
+      header: [
+        {
+          key: 'Content-Type',
+          value: 'application/json',
+        },
+      ],
+      body: {
+        mode: 'raw',
+        raw: JSON.stringify(
+          {
+            map_id: 1,
+            name: 'Forest Clearing',
+            description: 'A peaceful clearing in the forest',
+          },
+          null,
+          2
+        ),
+      },
+      url: {
+        raw: '/api/map-zones',
+        path: ['api', 'map-zones'],
+      },
+    },
+    'Create a new map zone'
+  ),
+
+  createRequest(
+    'Update Map Zone',
+    {
+      method: 'PUT',
+      header: [
+        {
+          key: 'Content-Type',
+          value: 'application/json',
+        },
+      ],
+      body: {
+        mode: 'raw',
+        raw: JSON.stringify(
+          {
+            name: 'Updated Forest Clearing',
+            description: 'An updated description for the forest clearing',
+          },
+          null,
+          2
+        ),
+      },
+      url: {
+        raw: '/api/map-zones/1',
+        path: ['api', 'map-zones', '1'],
+      },
+    },
+    'Update an existing map zone'
+  ),
+
+  createRequest(
+    'Delete Map Zone',
+    {
+      method: 'DELETE',
+      url: {
+        raw: '/api/map-zones/1',
+        path: ['api', 'map-zones', '1'],
+      },
+    },
+    'Delete a map zone'
+  ),
+
+  createRequest(
+    'Get Map Zones by Map ID',
+    {
+      method: 'GET',
+      url: {
+        raw: '/api/map-zones/map/1',
+        path: ['api', 'map-zones', 'map', '1'],
+      },
+    },
+    'Get all zones for a specific map'
+  ),
+];
+
 // Battle endpoints (sorted: POST, GET by ID, GET by character)
 const battleEndpoints = [
   createRequest(
@@ -859,6 +973,7 @@ collection.item = [
   createFolder('Equipment', 'Equipment browsing and information', equipmentEndpoints),
   createFolder('Monsters', 'Monster information and filtering', monsterEndpoints),
   createFolder('Maps', 'Game maps and area information', mapEndpoints),
+  createFolder('Map Zones', 'Map zones and area management', mapZonesEndpoints),
   createFolder('Battle', 'Combat system and battle management', battleEndpoints),
   createFolder('Inventory', 'Character inventory management', inventoryEndpoints),
   createFolder('Experience', 'Experience levels and progression system', experienceEndpoints),

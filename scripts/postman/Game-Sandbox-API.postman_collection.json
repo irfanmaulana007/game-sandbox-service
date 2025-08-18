@@ -711,6 +711,145 @@
       ]
     },
     {
+      "name": "Map Zones",
+      "description": "Map zones and area management",
+      "item": [
+        {
+          "name": "Get All Map Zones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/map-zones?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "map-zones"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get all map zones with pagination"
+        },
+        {
+          "name": "Get Map Zone by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/map-zones/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "map-zones",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get map zone details by ID"
+        },
+        {
+          "name": "Create Map Zone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"map_id\": 1,\n  \"name\": \"Forest Clearing\",\n  \"description\": \"A peaceful clearing in the forest\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/map-zones",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "map-zones"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Create a new map zone"
+        },
+        {
+          "name": "Update Map Zone",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Forest Clearing\",\n  \"description\": \"An updated description for the forest clearing\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/map-zones/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "map-zones",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Update an existing map zone"
+        },
+        {
+          "name": "Delete Map Zone",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{BASE_URL}}/api/map-zones/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "map-zones",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Delete a map zone"
+        },
+        {
+          "name": "Get Map Zones by Map ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/map-zones/map/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "map-zones",
+                "map",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get all zones for a specific map"
+        }
+      ]
+    },
+    {
       "name": "Battle",
       "description": "Combat system and battle management",
       "item": [
