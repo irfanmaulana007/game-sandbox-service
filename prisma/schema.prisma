@@ -219,10 +219,23 @@ model BattleLog {
   battle_date                DateTime     @default(now())
 
   // Relations
-  character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
-  monster   Monster   @relation(fields: [monster_id], references: [id])
+  character        Character          @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  monster          Monster            @relation(fields: [monster_id], references: [id])
+  battleLogDetails BattleLogDetails[]
 
   @@map("battle_logs")
+}
+
+model BattleLogDetails {
+  id            String   @id @default(cuid())
+  battle_log_id String
+  details       Json?
+  created_at    DateTime @default(now())
+
+  // Relations
+  battleLog BattleLog @relation(fields: [battle_log_id], references: [id], onDelete: Cascade)
+
+  @@map("battle_log_details")
 }
 
 model ExperienceLevel {

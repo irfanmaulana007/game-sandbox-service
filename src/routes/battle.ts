@@ -1,7 +1,7 @@
 import { Router, type Response } from 'express';
 import { BattleController } from '~/controllers/battleController';
 import { authenticateToken, type AuthRequest } from '~/middleware/auth';
-import { validateBattleRequest, validateIdParam } from '~/middleware/validation';
+import { validateBattleRequest, validateCUIDParam } from '~/middleware/validation';
 
 const router = Router();
 const battleController = new BattleController();
@@ -12,7 +12,7 @@ router.post('/start', authenticateToken, validateBattleRequest, (req: AuthReques
 );
 
 // Get battle by ID
-router.get('/:id', authenticateToken, validateIdParam, (req: AuthRequest, res: Response) =>
+router.get('/:id', authenticateToken, validateCUIDParam, (req: AuthRequest, res: Response) =>
   battleController.getBattleById(req, res)
 );
 
@@ -20,7 +20,7 @@ router.get('/:id', authenticateToken, validateIdParam, (req: AuthRequest, res: R
 router.get(
   '/character/:characterId',
   authenticateToken,
-  validateIdParam,
+  validateCUIDParam,
   (req: AuthRequest, res: Response) => battleController.getBattlesForCharacter(req, res)
 );
 

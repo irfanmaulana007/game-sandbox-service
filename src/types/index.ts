@@ -208,7 +208,7 @@ export interface BattleLog {
   id: string;
   character_id: string;
   monster_id: number;
-  battle_result: 'victory' | 'defeat';
+  battleResult: 'victory' | 'defeat';
   character_health_remaining: number;
   monster_health_remaining: number;
   turns_taken: number;
@@ -220,6 +220,14 @@ export interface BattleLog {
 export interface BattleRequest {
   character_id: string;
   monster_id: number;
+}
+
+export interface BattleResponse {
+  battleLog: BattleLog;
+  battleResult: 'victory' | 'defeat';
+  experienceGained: number;
+  goldGained: number;
+  levelGained: boolean;
 }
 
 // Experience and leveling

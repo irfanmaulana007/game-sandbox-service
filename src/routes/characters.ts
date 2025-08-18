@@ -3,7 +3,7 @@ import { CharacterController } from '~/controllers/characterController';
 import { authenticateToken, type AuthRequest } from '~/middleware/auth';
 import {
   validateCharacterCreation,
-  validateIdParam,
+  validateCUIDParam,
   validateStatAllocation,
 } from '~/middleware/validation';
 
@@ -26,25 +26,30 @@ router.post('/', authenticateToken, validateCharacterCreation, (req: AuthRequest
 );
 
 // Get character by ID
-router.get('/:id', authenticateToken, validateIdParam, (req: AuthRequest, res: Response) =>
+router.get('/:id', authenticateToken, validateCUIDParam, (req: AuthRequest, res: Response) =>
   characterController.getCharacterById(req, res)
 );
 
 // Update character
-router.put('/:id', authenticateToken, validateIdParam, (req: AuthRequest, res: Response) =>
+router.put('/:id', authenticateToken, validateCUIDParam, (req: AuthRequest, res: Response) =>
   characterController.updateCharacter(req, res)
 );
 
 // Delete character
-router.delete('/:id', authenticateToken, validateIdParam, (req: AuthRequest, res: Response) =>
+router.delete('/:id', authenticateToken, validateCUIDParam, (req: AuthRequest, res: Response) =>
   characterController.deleteCharacter(req, res)
+);
+
+// Rest character
+router.post('/me/rest', authenticateToken, (req: AuthRequest, res: Response) =>
+  characterController.restCharacter(req, res)
 );
 
 // Allocate status points
 router.post(
   '/:id/allocate-stats',
   authenticateToken,
-  validateIdParam,
+  validateCUIDParam,
   validateStatAllocation,
   (req: AuthRequest, res: Response) => characterController.allocateStats(req, res)
 );

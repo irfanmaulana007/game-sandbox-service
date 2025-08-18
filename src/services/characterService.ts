@@ -184,4 +184,17 @@ export class CharacterService {
 
     return updatedCharacter;
   }
+
+  async restCharacter(id: string, userId: string) {
+    const character = await this.getCharacterById(id, userId);
+
+    const updatedCharacter = await prisma.character.update({
+      where: { id },
+      data: {
+        health: character.max_health,
+      },
+    });
+
+    return updatedCharacter;
+  }
 }

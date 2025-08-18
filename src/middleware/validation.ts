@@ -1,5 +1,13 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
+
+// Custom validation for CUID format
+const isCUID = (value: string): boolean => {
+  // CUID format: c[a-z0-9]{24}
+  const cuidRegex = /^c[a-z0-9]{24}$/;
+
+  return cuidRegex.test(value);
+};
 
 export function handleValidationErrors(req: Request, res: Response, next: NextFunction): void {
   const errors = validationResult(req);
@@ -65,13 +73,19 @@ export const validateStatAllocation = [
 
 // Equipment validation rules
 export const validateEquipmentEquip = [
-  param('equipmentId').isUUID().withMessage('Equipment ID must be a valid UUID'),
+  param('equipmentId').isInt({ min: 1 }).withMessage('Equipment ID must be a positive integer'),
   handleValidationErrors,
 ];
 
 // Battle validation rules
 export const validateBattleRequest = [
-  body('character_id').isUUID().withMessage('Character ID must be a valid UUID'),
+  body('character_id').custom(value => {
+    if (!isCUID(value)) {
+      throw new Error('Character ID must be a valid CUID');
+    }
+
+    return true;
+  }),
   body('monster_id').isInt({ min: 1 }).withMessage('Monster ID must be a positive integer'),
   handleValidationErrors,
 ];
@@ -86,9 +100,21 @@ export const validatePagination = [
   handleValidationErrors,
 ];
 
-// ID parameter validation
+// ID parameter validation - for CUID-based models (User, Character, BattleLog, etc.)
+export const validateCUIDParam = [
+  param('id').custom(value => {
+    if (!isCUID(value)) {
+      throw new Error('ID must be a valid CUID');
+    }
+
+    return true;
+  }),
+  handleValidationErrors,
+];
+
+// ID parameter validation - for auto-increment models (ExperienceLevel, etc.)
 export const validateIdParam = [
-  param('id').isUUID().withMessage('ID must be a valid UUID'),
+  param('id').isInt({ min: 1 }).withMessage('ID must be a positive integer'),
   handleValidationErrors,
 ];
 
@@ -99,7 +125,13 @@ export const validateNumericIdParam = [
 
 // Character ID validation (for inventory routes)
 export const validateCharacterIdParam = [
-  param('characterId').isUUID().withMessage('Character ID must be a valid UUID'),
+  param('characterId').custom(value => {
+    if (!isCUID(value)) {
+      throw new Error('Character ID must be a valid CUID');
+    }
+
+    return true;
+  }),
   handleValidationErrors,
 ];
 

@@ -1,9 +1,13 @@
+import type { Character, Monster, MonsterDetails } from '@prisma/client';
 import { prisma } from '~/database/prisma';
-import type { BattleEntity, BattleRequest, BattleResult } from '~/types';
+import type { BattleEntity, BattleRequest, BattleResponse, BattleResult } from '~/types';
 
 export class BattleService {
-  async startBattle(userId: string, battleData: BattleRequest) {
+  async startBattle(userId: string, battleData: BattleRequest): Promise<BattleResponse> {
     const { character_id, monster_id } = battleData;
+
+    console.log('🚀 ~ BattleService ~ startBattle ~ monster_id:', monster_id);
+    console.log('🚀 ~ BattleService ~ startBattle ~ character_id:', character_id);
 
     // Get character and monster data
     const [character, monster] = await Promise.all([
@@ -43,6 +47,13 @@ export class BattleService {
       },
     });
 
+    await prisma.battleLogDetails.createMany({
+      data: battleResult.battleLogDetails.map(detail => ({
+        battle_log_id: battleLog.id,
+        details: detail,
+      })),
+    });
+
     // Update character stats if victory
     if (battleResult.result === 'victory') {
       await prisma.character.update({
@@ -55,11 +66,14 @@ export class BattleService {
       });
     }
 
+    const isCharacterGainedLevel = await this.checkIfCharacterGainedLevel(character_id);
+
     return {
       battleLog,
       battleResult: battleResult.result,
       experienceGained: battleResult.experienceGained,
       goldGained: battleResult.goldGained,
+      levelGained: isCharacterGainedLevel,
     };
   }
 
@@ -132,9 +146,62 @@ export class BattleService {
     };
   }
 
+  private generateBattleTurns(
+    character: Character,
+    monster: Monster & { monster_detail: MonsterDetails }
+  ): ('character' | 'monster')[] {
+    const turns: ('character' | 'monster')[] = [];
+    const MAX_TURN = 100;
+
+    // Calculate total speed for both entities
+    const characterSpeed = character.speed;
+
+    const monsterSpeed = monster.speed;
+
+    // Determine who goes first based on speed (higher speed attacks first)
+    const firstAttacker = characterSpeed >= monsterSpeed ? 'character' : 'monster';
+
+    const secondAttacker = characterSpeed >= monsterSpeed ? 'monster' : 'character';
+
+    // Calculate how many times each entity can attack within MAX_TURN
+    let firstAttackerTurns = 0;
+    let secondAttackerTurns = 0;
+
+    // Distribute turns based on speed ratio, ensuring we don't exceed MAX_TURN
+    const totalSpeed = characterSpeed + monsterSpeed;
+
+    if (totalSpeed > 0) {
+      const firstAttackerSpeed = firstAttacker === 'character' ? characterSpeed : monsterSpeed;
+
+      firstAttackerTurns = Math.ceil((firstAttackerSpeed / totalSpeed) * MAX_TURN);
+      secondAttackerTurns = MAX_TURN - firstAttackerTurns;
+    }
+
+    // Build the turn order with alternating pattern based on speed ratio
+    let firstCount = 0;
+    let secondCount = 0;
+
+    for (let i = 0; i < MAX_TURN; i++) {
+      // Determine if first attacker should go based on their turn allocation
+      if (
+        firstCount < firstAttackerTurns &&
+        (secondCount >= secondAttackerTurns ||
+          firstCount / firstAttackerTurns <= secondCount / secondAttackerTurns)
+      ) {
+        turns.push(firstAttacker);
+        firstCount++;
+      } else {
+        turns.push(secondAttacker);
+        secondCount++;
+      }
+    }
+
+    return turns;
+  }
+
   private simulateBattle(
-    character: BattleEntity,
-    monster: BattleEntity
+    character: Character,
+    monster: Monster & { monster_detail: MonsterDetails }
   ): {
     result: 'victory' | 'defeat';
     characterHealthRemaining: number;
@@ -142,46 +209,67 @@ export class BattleService {
     turnsTaken: number;
     experienceGained: number;
     goldGained: number;
+    battleLogDetails: string[];
   } {
+    const battleLogDetails: string[] = [];
     let characterHealth = character.health;
     let monsterHealth = monster.health;
     let turnsTaken = 0;
-    const maxTurns = 100;
 
-    while (characterHealth > 0 && monsterHealth > 0 && turnsTaken < maxTurns) {
+    // Generate battle turns based on speed
+    const battleTurns = this.generateBattleTurns(character, monster);
+
+    const characterBattleEntity: BattleEntity = {
+      id: character.id,
+      health: characterHealth,
+      attack: character.attack,
+      defense: character.defense,
+      speed: character.speed,
+      critical: character.critical,
+    };
+
+    const monsterBattleEntity: BattleEntity = {
+      id: monster.id,
+      health: monsterHealth,
+      attack: monster.attack,
+      defense: monster.defense,
+      speed: monster.speed,
+      critical: monster.critical,
+    };
+
+    // Execute battle using the generated turn order
+    for (const turn of battleTurns) {
+      if (characterHealth <= 0 || monsterHealth <= 0) break;
+
       turnsTaken++;
 
-      // Character attacks first if higher speed
-      if (character.speed >= monster.speed) {
-        const damage = this.calculateDamage(character, monster);
+      if (turn === 'character') {
+        // Character attacks
+        const damage = this.calculateDamage(characterBattleEntity, monsterBattleEntity);
 
         monsterHealth = Math.max(0, monsterHealth - damage.damage);
+        battleLogDetails.push(
+          `${character.name} attacks ${monster.monster_detail.name} for ${damage.damage} damage ${damage.isCritical ? 'CRITICALLY' : ''}. ${monster.health} health remaining.`
+        );
 
         if (monsterHealth <= 0) break;
-
-        // Monster attacks back
-        const monsterDamage = this.calculateDamage(monster, character);
-
-        characterHealth = Math.max(0, characterHealth - monsterDamage.damage);
       } else {
-        // Monster attacks first
-        const monsterDamage = this.calculateDamage(monster, character);
+        // Monster attacks
+        const monsterDamage = this.calculateDamage(monsterBattleEntity, characterBattleEntity);
 
         characterHealth = Math.max(0, characterHealth - monsterDamage.damage);
+        battleLogDetails.push(
+          `${monster.monster_detail.name} attacks ${character.name} for ${monsterDamage.damage} damage ${monsterDamage.isCritical ? 'CRITICALLY' : ''}. ${character.health} health remaining.`
+        );
 
         if (characterHealth <= 0) break;
-
-        // Character attacks back
-        const damage = this.calculateDamage(character, monster);
-
-        monsterHealth = Math.max(0, monsterHealth - damage.damage);
       }
     }
 
     const result = characterHealth > 0 ? 'victory' : 'defeat';
     // Note: These properties might not exist on BattleEntity, so we'll use 0 as fallback
-    const experienceGained = result === 'victory' ? 0 : 0;
-    const goldGained = result === 'victory' ? 0 : 0;
+    const experienceGained = result === 'victory' ? monster.experience_reward : 0;
+    const goldGained = result === 'victory' ? monster.gold_reward : 0;
 
     return {
       result,
@@ -190,6 +278,7 @@ export class BattleService {
       turnsTaken,
       experienceGained,
       goldGained,
+      battleLogDetails,
     };
   }
 
@@ -212,5 +301,38 @@ export class BattleService {
       damage: Math.round(finalDamage) > 0 ? Math.round(finalDamage) : 0,
       isCritical,
     };
+  }
+
+  private async checkIfCharacterGainedLevel(characterId: string): Promise<boolean> {
+    // Get the character's current experience and level
+    const character = await prisma.character.findUnique({
+      where: { id: characterId },
+    });
+
+    if (!character) {
+      return false;
+    }
+
+    // Find the next level requirement
+    const nextLevel = await prisma.experienceLevel.findFirst({
+      where: { experience: { gt: character.experience } },
+      orderBy: { experience: 'asc' },
+    });
+
+    if (!nextLevel) {
+      // Character is at max level
+      return false;
+    }
+
+    // Find the current level requirement
+    const currentLevel = await prisma.experienceLevel.findFirst({
+      where: { experience: { lte: character.experience } },
+      orderBy: { experience: 'desc' },
+    });
+
+    const currentLevelNumber = currentLevel ? currentLevel.level : 0;
+
+    // Check if character's level is less than what it should be based on experience
+    return character.level < currentLevelNumber;
   }
 }

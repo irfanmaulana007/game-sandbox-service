@@ -183,4 +183,27 @@ export class CharacterController {
       sendInternalError(res, 'Failed to allocate stats');
     }
   }
+
+  async restCharacter(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return sendUnauthorized(res, 'User not authenticated');
+      }
+
+      const character = await this.characterService.getCharacterByUserId(req.user.userId);
+      const updatedCharacter = await this.characterService.restCharacter(
+        character.id,
+        req.user.userId
+      );
+
+      sendSuccess(res, updatedCharacter, 'Character rested successfully');
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Character not found') {
+        return sendNotFound(res, error.message);
+      }
+
+      console.error('Rest character error:', error);
+      sendInternalError(res, 'Failed to rest character');
+    }
+  }
 }
