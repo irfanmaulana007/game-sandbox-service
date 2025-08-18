@@ -11,17 +11,16 @@ export class MonstersService {
     const where: Prisma.MonsterWhereInput = {};
 
     if (filters.level) where.level = filters.level;
-    if (filters.mapId) where.map_id = filters.mapId;
+    if (filters.mapId) where.monster_detail_id = filters.mapId;
     if (filters.rank) {
-      where.details = { rank: filters.rank };
+      where.rank = filters.rank;
     }
 
     const [monsters, total] = await Promise.all([
       prisma.monster.findMany({
         where,
         include: {
-          details: true,
-          map: true,
+          monster_detail: true,
         },
         skip,
         take: limit,
@@ -47,8 +46,7 @@ export class MonstersService {
     const monster = await prisma.monster.findUnique({
       where: { id },
       include: {
-        details: true,
-        map: true,
+        monster_detail: true,
       },
     });
 
@@ -64,15 +62,15 @@ export class MonstersService {
 
     const [monsters, total] = await Promise.all([
       prisma.monster.findMany({
-        where: { map_id: mapId },
+        where: { monster_detail: { map_zone_id: mapId } },
         include: {
-          details: true,
+          monster_detail: true,
         },
         skip,
         take: limit,
         orderBy: { level: 'asc' },
       }),
-      prisma.monster.count({ where: { map_id: mapId } }),
+      prisma.monster.count({ where: { monster_detail: { map_zone_id: mapId } } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);
@@ -94,21 +92,16 @@ export class MonstersService {
     const [monsters, total] = await Promise.all([
       prisma.monster.findMany({
         where: {
-          details: { rank },
+          rank,
         },
         include: {
-          details: true,
-          map: true,
+          monster_detail: true,
         },
         skip,
         take: limit,
         orderBy: { level: 'asc' },
       }),
-      prisma.monster.count({
-        where: {
-          details: { rank },
-        },
-      }),
+      prisma.monster.count({ where: { rank } }),
     ]);
 
     const totalPages = Math.ceil(total / limit);

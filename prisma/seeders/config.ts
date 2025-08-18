@@ -94,7 +94,7 @@ export const defaultSeederConfig: SeederConfig = {
   },
 
   monsters: {
-    count: 80,
+    count: 5,
     levelRange: {
       min: 1,
       max: 99,

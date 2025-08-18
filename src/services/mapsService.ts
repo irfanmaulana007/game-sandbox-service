@@ -19,7 +19,7 @@ export class MapsService {
         where,
         include: {
           _count: {
-            select: { monsters: true },
+            select: { map_zones: true },
           },
         },
         skip,
@@ -46,11 +46,19 @@ export class MapsService {
     const map = await prisma.gameMap.findUnique({
       where: { id },
       include: {
-        monsters: {
+        map_zones: {
           include: {
-            details: true,
+            monsters: {
+              include: {
+                monsters: {
+                  include: {
+                    monster_detail: true,
+                  },
+                },
+              },
+            },
           },
-          orderBy: { level: 'asc' },
+          orderBy: { id: 'asc' },
         },
       },
     });

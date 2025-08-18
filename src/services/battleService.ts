@@ -13,7 +13,7 @@ export class BattleService {
       }),
       prisma.monster.findUnique({
         where: { id: monster_id },
-        include: { details: true },
+        include: { monster_detail: true },
       }),
     ]);
 
@@ -71,7 +71,7 @@ export class BattleService {
           include: { job: true },
         },
         monster: {
-          include: { details: true },
+          include: { monster_detail: true },
         },
       },
     });
@@ -109,7 +109,7 @@ export class BattleService {
         where: { character_id: characterId },
         include: {
           monster: {
-            include: { details: true },
+            include: { monster_detail: true },
           },
         },
         skip,

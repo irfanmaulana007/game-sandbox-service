@@ -97,7 +97,22 @@ function createFolder(name, description = '', items = []) {
   };
 }
 
-// Authentication endpoints
+// Health Check endpoints
+const healthEndpoints = [
+  createRequest(
+    'Health Check',
+    {
+      method: 'GET',
+      url: {
+        raw: '/health',
+        path: ['health'],
+      },
+    },
+    'Check server health status'
+  ),
+];
+
+// Authentication endpoints (sorted: POST, GET, POST)
 const authEndpoints = [
   createRequest(
     'Register User',
@@ -195,7 +210,7 @@ const authEndpoints = [
   ),
 ];
 
-// Character endpoints
+// Character endpoints (sorted: GET all, GET by ID, POST, PUT, DELETE, POST custom)
 const characterEndpoints = [
   createRequest(
     'Get All Characters',
@@ -213,6 +228,42 @@ const characterEndpoints = [
       },
     },
     'Get all characters for the authenticated user'
+  ),
+
+  createRequest(
+    'Get My Character',
+    {
+      method: 'GET',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/characters/me',
+        path: ['api', 'characters', 'me'],
+      },
+    },
+    'Get single character for the authenticated user'
+  ),
+
+  createRequest(
+    'Get Character by ID',
+    {
+      method: 'GET',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/characters/{{character_id}}',
+        path: ['api', 'characters', '{{character_id}}'],
+      },
+    },
+    'Get character details by ID'
   ),
 
   createRequest(
@@ -246,24 +297,6 @@ const characterEndpoints = [
       },
     },
     'Create a new character'
-  ),
-
-  createRequest(
-    'Get Character by ID',
-    {
-      method: 'GET',
-      header: [
-        {
-          key: 'Authorization',
-          value: 'Bearer {{AUTH_TOKEN}}',
-        },
-      ],
-      url: {
-        raw: '/api/characters/{{character_id}}',
-        path: ['api', 'characters', '{{character_id}}'],
-      },
-    },
-    'Get character details by ID'
   ),
 
   createRequest(
@@ -353,7 +386,7 @@ const characterEndpoints = [
   ),
 ];
 
-// Equipment endpoints
+// Equipment endpoints (sorted: GET all, GET by ID)
 const equipmentEndpoints = [
   createRequest(
     'Get All Equipment',
@@ -382,41 +415,9 @@ const equipmentEndpoints = [
     },
     'Get equipment details by ID'
   ),
-
-  createRequest(
-    'Get Equipment by Type',
-    {
-      method: 'GET',
-      url: {
-        raw: '/api/equipment/type/weapon?page=1&limit=10',
-        path: ['api', 'equipment', 'type', 'weapon'],
-        query: [
-          { key: 'page', value: '1' },
-          { key: 'limit', value: '10' },
-        ],
-      },
-    },
-    'Get equipment filtered by type'
-  ),
-
-  createRequest(
-    'Get Equipment by Rarity',
-    {
-      method: 'GET',
-      url: {
-        raw: '/api/equipment/rarity/rare?page=1&limit=10',
-        path: ['api', 'equipment', 'rarity', 'rare'],
-        query: [
-          { key: 'page', value: '1' },
-          { key: 'limit', value: '10' },
-        ],
-      },
-    },
-    'Get equipment filtered by rarity'
-  ),
 ];
 
-// Monster endpoints
+// Monster endpoints (sorted: GET all, GET by ID, GET by map, GET by rank)
 const monsterEndpoints = [
   createRequest(
     'Get All Monsters',
@@ -479,7 +480,7 @@ const monsterEndpoints = [
   ),
 ];
 
-// Map endpoints
+// Map endpoints (sorted: GET all, GET by ID)
 const mapEndpoints = [
   createRequest(
     'Get All Maps',
@@ -508,41 +509,9 @@ const mapEndpoints = [
     },
     'Get map details by ID'
   ),
-
-  createRequest(
-    'Get Maps by Difficulty',
-    {
-      method: 'GET',
-      url: {
-        raw: '/api/maps/difficulty/easy?page=1&limit=10',
-        path: ['api', 'maps', 'difficulty', 'easy'],
-        query: [
-          { key: 'page', value: '1' },
-          { key: 'limit', value: '10' },
-        ],
-      },
-    },
-    'Get maps by difficulty level'
-  ),
-
-  createRequest(
-    'Get Maps by Level',
-    {
-      method: 'GET',
-      url: {
-        raw: '/api/maps/level/10?page=1&limit=10',
-        path: ['api', 'maps', 'level', '10'],
-        query: [
-          { key: 'page', value: '1' },
-          { key: 'limit', value: '10' },
-        ],
-      },
-    },
-    'Get maps suitable for character level'
-  ),
 ];
 
-// Battle endpoints
+// Battle endpoints (sorted: POST, GET by ID, GET by character)
 const battleEndpoints = [
   createRequest(
     'Start Battle',
@@ -618,7 +587,7 @@ const battleEndpoints = [
   ),
 ];
 
-// Inventory endpoints
+// Inventory endpoints (sorted: GET, POST, PUT, DELETE)
 const inventoryEndpoints = [
   createRequest(
     'Get Character Inventory',
@@ -722,24 +691,169 @@ const inventoryEndpoints = [
   ),
 ];
 
-// Health check endpoint
-const healthEndpoint = [
+// Experience endpoints (sorted: GET all, GET by ID, POST, PUT, DELETE, POST bulk, GET next level)
+const experienceEndpoints = [
   createRequest(
-    'Health Check',
+    'Get All Experience Levels',
     {
       method: 'GET',
       url: {
-        raw: '/health',
-        path: ['health'],
+        raw: '/api/experience?page=1&limit=10',
+        path: ['api', 'experience'],
+        query: [
+          { key: 'page', value: '1' },
+          { key: 'limit', value: '10' },
+        ],
       },
     },
-    'Check server health status'
+    'Get all experience levels with pagination'
+  ),
+
+  createRequest(
+    'Get Experience Level by Level',
+    {
+      method: 'GET',
+      url: {
+        raw: '/api/experience/10',
+        path: ['api', 'experience', '10'],
+      },
+    },
+    'Get experience level by level number'
+  ),
+
+  createRequest(
+    'Get Next Level Info',
+    {
+      method: 'GET',
+      url: {
+        raw: '/api/experience/next/1000',
+        path: ['api', 'experience', 'next', '1000'],
+      },
+    },
+    'Get experience required for next level'
+  ),
+
+  createRequest(
+    'Create Experience Level',
+    {
+      method: 'POST',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+        {
+          key: 'Content-Type',
+          value: 'application/json',
+        },
+      ],
+      body: {
+        mode: 'raw',
+        raw: JSON.stringify(
+          {
+            level: 100,
+            experience: 1000000,
+          },
+          null,
+          2
+        ),
+      },
+      url: {
+        raw: '/api/experience',
+        path: ['api', 'experience'],
+      },
+    },
+    'Create new experience level (admin only)'
+  ),
+
+  createRequest(
+    'Update Experience Level',
+    {
+      method: 'PUT',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+        {
+          key: 'Content-Type',
+          value: 'application/json',
+        },
+      ],
+      body: {
+        mode: 'raw',
+        raw: JSON.stringify(
+          {
+            experience: 1200000,
+          },
+          null,
+          2
+        ),
+      },
+      url: {
+        raw: '/api/experience/100',
+        path: ['api', 'experience', '100'],
+      },
+    },
+    'Update experience level (admin only)'
+  ),
+
+  createRequest(
+    'Delete Experience Level',
+    {
+      method: 'DELETE',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/experience/100',
+        path: ['api', 'experience', '100'],
+      },
+    },
+    'Delete experience level (admin only)'
+  ),
+
+  createRequest(
+    'Bulk Create Experience Levels',
+    {
+      method: 'POST',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+        {
+          key: 'Content-Type',
+          value: 'application/json',
+        },
+      ],
+      body: {
+        mode: 'raw',
+        raw: JSON.stringify(
+          [
+            { level: 101, experience: 1100000 },
+            { level: 102, experience: 1200000 },
+            { level: 103, experience: 1300000 },
+          ],
+          null,
+          2
+        ),
+      },
+      url: {
+        raw: '/api/experience/bulk',
+        path: ['api', 'experience', 'bulk'],
+      },
+    },
+    'Bulk create experience levels (admin only)'
   ),
 ];
 
-// Build collection structure
+// Build collection structure with consistent sorting
 collection.item = [
-  createFolder('Health Check', 'Server health and status endpoints', healthEndpoint),
+  createFolder('Health Check', 'Server health and status endpoints', healthEndpoints),
   createFolder('Authentication', 'User authentication and management', authEndpoints),
   createFolder('Characters', 'Character creation, management, and progression', characterEndpoints),
   createFolder('Equipment', 'Equipment browsing and information', equipmentEndpoints),
@@ -747,6 +861,7 @@ collection.item = [
   createFolder('Maps', 'Game maps and area information', mapEndpoints),
   createFolder('Battle', 'Combat system and battle management', battleEndpoints),
   createFolder('Inventory', 'Character inventory management', inventoryEndpoints),
+  createFolder('Experience', 'Experience levels and progression system', experienceEndpoints),
 ];
 
 // Add post-response script to login endpoint for automatic token handling
@@ -904,7 +1019,7 @@ Some requests use **dynamic variables** that you need to set:
 
 ## 🎯 Tips for Testing
 
-1. **Start with unauthenticated endpoints** (Health, Equipment, Monsters, Maps)
+1. **Start with unauthenticated endpoints** (Health, Equipment, Monsters, Maps, Experience)
 2. **Create a user account** and login to get authentication
 3. **Create a character** to test character-related endpoints
 4. **Use the automatic token handling** - no need to manually copy tokens

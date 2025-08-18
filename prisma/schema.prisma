@@ -150,46 +150,60 @@ model GameMap {
   created_at       DateTime      @default(now())
 
   // Relations
-  monsters Monster[]
+  map_zones GameMapZone[]
 
   @@map("maps")
 }
 
+model GameMapZone {
+  id          Int      @id @default(autoincrement())
+  map_id      Int
+  name        String
+  description String?
+  created_at  DateTime @default(now())
+
+  // Relations
+  map      GameMap          @relation(fields: [map_id], references: [id])
+  monsters MonsterDetails[]
+
+  @@map("map_zones")
+}
+
+model MonsterDetails {
+  id          Int      @id @default(autoincrement())
+  map_zone_id Int?
+  name        String
+  description String?
+  image_url   String?
+  drop_table  Json?
+  created_at  DateTime @default(now())
+
+  // Relations
+  map_zone GameMapZone? @relation(fields: [map_zone_id], references: [id])
+  monsters Monster[]
+
+  @@map("monster_details")
+}
+
 model Monster {
-  id                Int      @id @default(autoincrement())
-  name              String
-  level             Int      @default(1)
+  id                Int         @id @default(autoincrement())
+  monster_detail_id Int         @unique
+  rank              MonsterRank
+  level             Int         @default(1)
   health            Int
   attack            Int
   defense           Int
   speed             Int
   critical          Int
-  experience_reward Int      @default(0)
-  gold_reward       Int      @default(0)
-  map_id            Int?
-  created_at        DateTime @default(now())
+  experience_reward Int         @default(0)
+  gold_reward       Int         @default(0)
+  created_at        DateTime    @default(now())
 
   // Relations
-  map        GameMap?        @relation(fields: [map_id], references: [id])
-  details    MonsterDetails?
-  battleLogs BattleLog[]
+  monster_detail MonsterDetails @relation(fields: [monster_detail_id], references: [id], onDelete: Cascade)
+  battleLogs     BattleLog[]
 
   @@map("monsters")
-}
-
-model MonsterDetails {
-  id          Int         @id @default(autoincrement())
-  monster_id  Int         @unique
-  rank        MonsterRank
-  description String?
-  image_url   String?
-  drop_table  Json?
-  created_at  DateTime    @default(now())
-
-  // Relations
-  monster Monster @relation(fields: [monster_id], references: [id], onDelete: Cascade)
-
-  @@map("monster_details")
 }
 
 model BattleLog {
