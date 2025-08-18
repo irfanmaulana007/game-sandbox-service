@@ -701,6 +701,99 @@ const battleEndpoints = [
   ),
 ];
 
+// Character Equipment endpoints (sorted: GET all, GET equipped, POST equip, POST unequip, DELETE sell)
+const characterEquipmentEndpoints = [
+  createRequest(
+    'Get Character Equipment',
+    {
+      method: 'GET',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipment/{{character_id}}',
+        path: ['api', 'character-equipment', '{{character_id}}'],
+      },
+    },
+    'Get all equipment for a character'
+  ),
+
+  createRequest(
+    'Get Equipped Equipment',
+    {
+      method: 'GET',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipment/{{character_id}}/equipped',
+        path: ['api', 'character-equipment', '{{character_id}}', 'equipped'],
+      },
+    },
+    'Get only equipped equipment for a character'
+  ),
+
+  createRequest(
+    'Equip Item',
+    {
+      method: 'POST',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipment/{{character_id}}/equip/{{equipment_id}}',
+        path: ['api', 'character-equipment', '{{character_id}}', 'equip', '{{equipment_id}}'],
+      },
+    },
+    'Equip an item to a character'
+  ),
+
+  createRequest(
+    'Unequip Item',
+    {
+      method: 'POST',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipment/{{character_id}}/unequip/{{equipment_id}}',
+        path: ['api', 'character-equipment', '{{character_id}}', 'unequip', '{{equipment_id}}'],
+      },
+    },
+    'Unequip an item from a character'
+  ),
+
+  createRequest(
+    'Sell Equipment',
+    {
+      method: 'DELETE',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipment/{{character_id}}/sell/{{equipment_id}}',
+        path: ['api', 'character-equipment', '{{character_id}}', 'sell', '{{equipment_id}}'],
+      },
+    },
+    'Sell equipment and receive gold'
+  ),
+];
+
 // Inventory endpoints (sorted: GET, POST, PUT, DELETE)
 const inventoryEndpoints = [
   createRequest(
@@ -970,6 +1063,11 @@ collection.item = [
   createFolder('Health Check', 'Server health and status endpoints', healthEndpoints),
   createFolder('Authentication', 'User authentication and management', authEndpoints),
   createFolder('Characters', 'Character creation, management, and progression', characterEndpoints),
+  createFolder(
+    'Character Equipment',
+    'Character equipment management and equipping/unequipping items',
+    characterEquipmentEndpoints
+  ),
   createFolder('Equipment', 'Equipment browsing and information', equipmentEndpoints),
   createFolder('Monsters', 'Monster information and filtering', monsterEndpoints),
   createFolder('Maps', 'Game maps and area information', mapEndpoints),

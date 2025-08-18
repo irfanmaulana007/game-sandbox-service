@@ -87,6 +87,8 @@ model Equipment {
   critical_bonus Int           @default(0)
   description    String?
   drop_rate      Decimal       @default(0.0100) @db.Decimal(5, 4)
+  buy_price      Int           @default(0)
+  sell_price     Int           @default(0)
   created_at     DateTime      @default(now())
 
   // Relations
@@ -96,11 +98,10 @@ model Equipment {
 }
 
 model CharacterEquipment {
-  id           String        @id @default(cuid())
+  id           String  @id @default(cuid())
   character_id String
   equipment_id Int
-  slot         EquipmentSlot
-  equipped_at  DateTime      @default(now())
+  equipped     Boolean @default(false)
 
   // Relations
   character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
@@ -260,13 +261,6 @@ enum EquipmentType {
   weapon
   armor
   accessory
-}
-
-enum EquipmentSlot {
-  weapon
-  armor
-  accessory1
-  accessory2
 }
 
 enum Rarity {

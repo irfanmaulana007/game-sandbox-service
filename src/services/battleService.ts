@@ -1,8 +1,10 @@
 import {
   BattleLogDetailType,
   type Character,
+  type Equipment,
   type Monster,
   type MonsterDetails,
+  type Rarity,
 } from '@prisma/client';
 import type { JsonValue } from '@prisma/client/runtime/library';
 import { prisma } from '~/database/prisma';
@@ -93,6 +95,7 @@ export class BattleService {
     });
 
     let isCharacterGainedLevel = false;
+    let droppedEquipment: Equipment | null = null;
 
     // Update character stats if victory
     if (battleResult.result === 'victory') {
@@ -110,6 +113,40 @@ export class BattleService {
       if (isCharacterGainedLevel) {
         await characterService.levelupCharacter(character_id);
       }
+
+      // Handle equipment drop
+      droppedEquipment = await this.getEquipmentDrop(selectedMonster);
+
+      if (droppedEquipment) {
+        // Add equipment to character's inventory
+        await prisma.characterEquipment.create({
+          data: {
+            character_id,
+            equipment_id: droppedEquipment.id,
+            equipped: false, // Equipment starts as unequipped
+          },
+        });
+
+        // Add battle log entry for equipment drop
+        battleLogs.push({
+          type: BattleLogDetailType.reward,
+          message: `Obtained ${droppedEquipment.name} (${droppedEquipment.rarity})!`,
+        });
+      }
+    } else {
+      // Subtract half of the monster's gold reward from the character's gold
+      let goldToSubtract = Math.floor(selectedMonster.gold_reward / 2);
+
+      if (goldToSubtract > character.gold) {
+        goldToSubtract = character.gold;
+      }
+
+      await prisma.character.update({
+        where: { id: character_id },
+        data: {
+          gold: character.gold - goldToSubtract,
+        },
+      });
     }
 
     return {
@@ -119,6 +156,7 @@ export class BattleService {
       goldGained: battleResult.goldGained,
       levelGained: isCharacterGainedLevel,
       monster: selectedMonster,
+      equipmentDropped: droppedEquipment || undefined,
     };
   }
 
@@ -512,5 +550,124 @@ export class BattleService {
 
     // Check if character's level is less than what it should be based on experience
     return character.level < currentLevelNumber;
+  }
+
+  private async getEquipmentDrop(
+    monster: Monster & { monster_detail: MonsterDetails }
+  ): Promise<Equipment | null> {
+    // Determine which equipment rarities this monster can drop based on its rank
+    const allowedRarities = this.getAllowedEquipmentRarities(monster.rank);
+
+    if (allowedRarities.length === 0) {
+      return null;
+    }
+
+    // Get all equipment that matches the monster's level and allowed rarities
+    const availableEquipment = await prisma.equipment.findMany({
+      where: {
+        rarity: { in: allowedRarities },
+        min_level: { lte: monster.level + 5 }, // Allow equipment up to 5 levels higher
+      },
+    });
+
+    if (availableEquipment.length === 0) {
+      return null;
+    }
+
+    // Calculate drop probability based on monster level and equipment rarity
+    const equipmentWithProbabilities = availableEquipment.map(equipment => {
+      const baseDropRate = Number(equipment.drop_rate);
+      const levelMultiplier = this.calculateLevelMultiplier(monster.level, equipment.min_level);
+      const rarityMultiplier = this.calculateRarityMultiplier(equipment.rarity, monster.rank);
+      const finalDropRate = baseDropRate * levelMultiplier * rarityMultiplier;
+
+      return {
+        equipment,
+        dropRate: finalDropRate,
+      };
+    });
+
+    // Sort by drop rate (highest first) and normalize probabilities
+    equipmentWithProbabilities.sort((a, b) => b.dropRate - a.dropRate);
+
+    // Calculate total probability
+    const totalProbability = equipmentWithProbabilities.reduce(
+      (sum, item) => sum + item.dropRate,
+      0
+    );
+
+    if (totalProbability === 0) {
+      return null;
+    }
+
+    // Generate random number and select equipment
+    const random = Math.random() * totalProbability;
+    let cumulativeProbability = 0;
+
+    for (const item of equipmentWithProbabilities) {
+      cumulativeProbability += item.dropRate;
+      if (random <= cumulativeProbability) {
+        return item.equipment;
+      }
+    }
+
+    return null;
+  }
+
+  private getAllowedEquipmentRarities(monsterRank: string): Rarity[] {
+    switch (monsterRank) {
+      case 'legendary':
+        return ['legendary'];
+      case 'boss':
+        return ['epic'];
+      case 'elite':
+        return ['rare'];
+      case 'normal':
+        return ['common', 'uncommon'];
+      default:
+        return [];
+    }
+  }
+
+  private calculateLevelMultiplier(monsterLevel: number, equipmentMinLevel: number): number {
+    const levelDifference = Math.abs(monsterLevel - equipmentMinLevel);
+
+    if (levelDifference <= 2) {
+      return 1.0; // Same level range
+    } else if (levelDifference <= 5) {
+      return 0.7; // Slightly different level
+    } else if (levelDifference <= 10) {
+      return 0.4; // Different level range
+    } else {
+      return 0.1; // Very different level range
+    }
+  }
+
+  private calculateRarityMultiplier(equipmentRarity: Rarity, monsterRank: string): number {
+    // Base multipliers for each rarity
+    const rarityMultipliers = {
+      common: 1.0,
+      uncommon: 0.8,
+      rare: 0.6,
+      epic: 0.4,
+      legendary: 0.2,
+    };
+
+    // Rank-specific bonuses
+    const rankMultipliers = {
+      normal: { common: 1.2, uncommon: 1.0, rare: 0.3, epic: 0.1, legendary: 0.05 },
+      elite: { common: 0.8, uncommon: 0.6, rare: 1.2, epic: 0.3, legendary: 0.1 },
+      boss: { common: 0.5, uncommon: 0.4, rare: 0.8, epic: 1.2, legendary: 0.3 },
+      legendary: { common: 0.2, uncommon: 0.1, rare: 0.4, epic: 0.8, legendary: 1.5 },
+    };
+
+    const baseMultiplier =
+      rarityMultipliers[equipmentRarity as keyof typeof rarityMultipliers] || 1.0;
+    const rankMultiplier =
+      rankMultipliers[monsterRank as keyof typeof rankMultipliers]?.[
+        equipmentRarity as keyof typeof rarityMultipliers
+      ] || 1.0;
+
+    return baseMultiplier * rankMultiplier;
   }
 }

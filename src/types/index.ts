@@ -87,8 +87,10 @@ export interface Equipment {
   defense_bonus: number;
   speed_bonus: number;
   critical_bonus: number;
-  description: string;
-  drop_rate: number;
+  description: string | null;
+  drop_rate: any; // Using any to match Prisma Decimal type
+  buy_price: number;
+  sell_price: number;
   created_at: Date;
 }
 
@@ -97,7 +99,7 @@ export interface CharacterEquipment {
   character_id: string;
   equipment_id: number;
   slot: 'weapon' | 'armor' | 'accessory1' | 'accessory2';
-  equipped_at: Date;
+  equipped: boolean;
   equipment?: Equipment;
 }
 
@@ -252,6 +254,7 @@ export interface BattleResponse {
   goldGained: number;
   levelGained: boolean;
   monster: MonsterWithDetails;
+  equipmentDropped?: Equipment;
 }
 
 // Experience and leveling
@@ -318,8 +321,10 @@ export interface JwtPayload {
   exp?: number;
 }
 
+import type { Request } from 'express';
+
 // export interface AuthenticatedRequest extends Request {
-export interface AuthenticatedRequest {
+export interface AuthenticatedRequest extends Request {
   user?: JwtPayload;
 }
 

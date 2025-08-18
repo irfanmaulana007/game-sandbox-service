@@ -64,11 +64,11 @@ export const defaultSeederConfig: SeederConfig = {
   equipment: {
     count: 200,
     rarityDistribution: {
-      common: 50,
-      uncommon: 25,
-      rare: 15,
-      epic: 8,
-      legendary: 2,
+      common: 20,
+      uncommon: 10,
+      rare: 5,
+      epic: 3,
+      legendary: 1,
     },
     typeDistribution: {
       weapon: 40,

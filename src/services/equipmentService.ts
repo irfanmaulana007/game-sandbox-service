@@ -19,7 +19,9 @@ export class EquipmentService {
         where,
         skip,
         take: limit,
-        orderBy: { created_at: 'desc' },
+        orderBy: {
+          min_level: 'asc',
+        },
       }),
       prisma.equipment.count({ where }),
     ]);

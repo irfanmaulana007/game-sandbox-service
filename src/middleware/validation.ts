@@ -95,8 +95,8 @@ export const validatePagination = [
   query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
   query('limit')
     .optional()
-    .isInt({ min: 1, max: 100 })
-    .withMessage('Limit must be between 1 and 100'),
+    .isInt({ min: 1, max: 500 })
+    .withMessage('Limit must be between 1 and 500'),
   handleValidationErrors,
 ];
 
@@ -138,5 +138,17 @@ export const validateCharacterIdParam = [
 // Item ID validation (for inventory routes)
 export const validateItemIdParam = [
   param('itemId').isInt({ min: 1 }).withMessage('Item ID must be a positive integer'),
+  handleValidationErrors,
+];
+
+// Equipment ID validation (for character equipment routes)
+export const validateEquipmentIdParam = [
+  param('equipmentId').custom(value => {
+    if (!isCUID(value)) {
+      throw new Error('Equipment ID must be a valid CUID');
+    }
+
+    return true;
+  }),
   handleValidationErrors,
 ];

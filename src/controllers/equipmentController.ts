@@ -26,7 +26,13 @@ export class EquipmentController {
       const filters = { type, rarity, minLevel };
       const result = await this.equipmentService.getEquipment(page, limit, filters);
 
-      return sendSuccessWithPagination(res, result.equipment, result.pagination.total, page, limit);
+      return sendSuccessWithPagination(
+        res,
+        result.equipment as unknown[],
+        result.pagination.total,
+        page,
+        limit
+      );
     } catch (error) {
       console.error('Get equipment error:', error);
 
