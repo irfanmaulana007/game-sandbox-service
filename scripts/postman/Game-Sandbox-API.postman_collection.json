@@ -585,6 +585,70 @@
       ]
     },
     {
+      "name": "Job Classes",
+      "description": "Job class information and details",
+      "item": [
+        {
+          "name": "Get All Job Classes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/job-classes?page=1&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "job-classes"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get all job classes with pagination"
+        },
+        {
+          "name": "Get Job Class by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/job-classes/id/1",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "job-classes",
+                "id",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get job class details by ID"
+        },
+        {
+          "name": "Get Job Class by Name",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{BASE_URL}}/api/job-classes/name/Warrior",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "job-classes",
+                "name",
+                "Warrior"
+              ]
+            }
+          },
+          "response": [],
+          "description": "Get job class details by name"
+        }
+      ]
+    },
+    {
       "name": "Monsters",
       "description": "Monster information and filtering",
       "item": [

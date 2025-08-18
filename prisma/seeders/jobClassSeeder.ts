@@ -8,26 +8,34 @@ export class JobClassSeeder {
       {
         name: 'Barbarian',
         description: 'High defense warrior with balanced stats',
-        baseHealth: 120,
-        baseAttack: 15,
-        baseDefense: 20,
-        baseSpeed: 10,
-        baseCritical: 5,
-        healthPerLevel: 12,
-        attackPerLevel: 2,
-        defensePerLevel: 3,
+        // Base stats: 60 points total
+        // Barbarian: High defense, balanced attack, moderate health, low speed/critical
+        baseHealth: 12 * 10, // 120 HP (12 points * 10)
+        baseAttack: 12,
+        baseDefense: 17,
+        baseSpeed: 8,
+        baseCritical: 9,
+        // Status per level: 5 points total (from 7 status points per level)
+        // Barbarian: Focus on defense and health
+        healthPerLevel: 2 * 10, // 10 HP (1 point * 10)
+        attackPerLevel: 1,
+        defensePerLevel: 2,
         speedPerLevel: 1,
         criticalPerLevel: 1,
       },
       {
         name: 'Swordsman',
         description: 'Balanced fighter with good attack and defense',
-        baseHealth: 100,
-        baseAttack: 18,
-        baseDefense: 18,
-        baseSpeed: 12,
-        baseCritical: 8,
-        healthPerLevel: 10,
+        // Base stats: 60 points total
+        // Swordsman: Balanced attack/defense, moderate health, moderate speed/critical
+        baseHealth: 10 * 10, // 100 HP (10 points * 10)
+        baseAttack: 15,
+        baseDefense: 15,
+        baseSpeed: 10,
+        baseCritical: 10,
+        // Status per level: 5 points total
+        // Swordsman: Balanced growth
+        healthPerLevel: 1 * 10, // 10 HP (1 point * 10)
         attackPerLevel: 2,
         defensePerLevel: 2,
         speedPerLevel: 1,
@@ -36,30 +44,38 @@ export class JobClassSeeder {
       {
         name: 'Archer',
         description: 'Ranged fighter with high speed and critical',
-        baseHealth: 80,
-        baseAttack: 20,
-        baseDefense: 12,
-        baseSpeed: 18,
-        baseCritical: 15,
-        healthPerLevel: 8,
+        // Base stats: 60 points total
+        // Archer: High attack, moderate defense, high speed/critical, low health
+        baseHealth: 8 * 10, // 80 HP (8 points * 10)
+        baseAttack: 15,
+        baseDefense: 10,
+        baseSpeed: 15,
+        baseCritical: 12,
+        // Status per level: 5 points total
+        // Archer: Focus on attack, speed, and critical
+        healthPerLevel: 1 * 10, // 0 HP (0 points * 10)
         attackPerLevel: 2,
         defensePerLevel: 1,
         speedPerLevel: 2,
-        criticalPerLevel: 2,
+        criticalPerLevel: 1,
       },
       {
         name: 'Ninja',
         description: 'Stealth fighter with highest speed and critical',
-        baseHealth: 70,
-        baseAttack: 22,
-        baseDefense: 10,
-        baseSpeed: 22,
-        baseCritical: 20,
-        healthPerLevel: 7,
-        attackPerLevel: 2,
+        // Base stats: 60 points total
+        // Ninja: High attack, low defense, highest speed/critical, lowest health
+        baseHealth: 8 * 10, // 80 HP (8 points * 10)
+        baseAttack: 12,
+        baseDefense: 8,
+        baseSpeed: 18,
+        baseCritical: 14,
+        // Status per level: 5 points total
+        // Ninja: Focus on attack, speed, and critical
+        healthPerLevel: 1 * 10, // 0 HP (0 points * 10)
+        attackPerLevel: 1,
         defensePerLevel: 1,
-        speedPerLevel: 3,
-        criticalPerLevel: 3,
+        speedPerLevel: 2,
+        criticalPerLevel: 2,
       },
     ];
 

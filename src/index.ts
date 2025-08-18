@@ -12,6 +12,7 @@ import characterRoutes from './routes/characters';
 import equipmentRoutes from './routes/equipment';
 import experienceRoutes from './routes/experience';
 import inventoryRoutes from './routes/inventory';
+import jobClassesRoutes from './routes/jobClasses';
 import mapRoutes from './routes/maps';
 import mapZonesRoutes from './routes/mapZones';
 import monsterRoutes from './routes/monsters';
@@ -70,11 +71,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
 app.use('/api/equipment', equipmentRoutes);
 app.use('/api/experience', experienceRoutes);
-app.use('/api/monsters', monsterRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/job-classes', jobClassesRoutes);
 app.use('/api/maps', mapRoutes);
 app.use('/api/map-zones', mapZonesRoutes);
+app.use('/api/monsters', monsterRoutes);
 app.use('/api/battle', battleRoutes);
-app.use('/api/inventory', inventoryRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

@@ -128,9 +128,9 @@ const authEndpoints = [
         mode: 'raw',
         raw: JSON.stringify(
           {
-            username: 'testuser',
-            email: 'test@example.com',
-            password: 'password123',
+            username: 'irfanmaulana007',
+            email: 'dev.irfanmaulana007@gmail.com',
+            password: 'asd123',
           },
           null,
           2
