@@ -578,16 +578,9 @@ export class BattleService {
     const equipmentWithProbabilities = availableEquipment.map(equipment => {
       const baseDropRate = Number(equipment.drop_rate);
 
-      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ baseDropRate:', baseDropRate);
       const levelMultiplier = this.calculateLevelMultiplier(monster.level, equipment.min_level);
-
-      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ levelMultiplier:', levelMultiplier);
       const rarityMultiplier = this.calculateRarityMultiplier(equipment.rarity, monster.rank);
-
-      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ rarityMultiplier:', rarityMultiplier);
       const finalDropRate = baseDropRate * levelMultiplier * rarityMultiplier;
-
-      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ finalDropRate:', finalDropRate);
 
       return {
         equipment,
@@ -609,20 +602,9 @@ export class BattleService {
     }
 
     // Apply global drop rate reduction (make drops much rarer overall)
-    const globalDropRateReduction = 0.1; // 90% reduction
-
-    console.log(
-      '🚀 ~ BattleService ~ getEquipmentDrop ~ globalDropRateReduction:',
-      globalDropRateReduction
-    );
+    const globalDropRateReduction = 0.15; // 85% reduction (reduced from 0.25)
     const adjustedTotalProbability = totalProbability * globalDropRateReduction;
 
-    console.log(
-      '🚀 ~ BattleService ~ getEquipmentDrop ~ adjustedTotalProbability:',
-      adjustedTotalProbability
-    );
-
-    console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ Math.random():', Math.random());
     // First, determine if ANY equipment drops at all
     if (Math.random() > adjustedTotalProbability) {
       return null; // No equipment drops
@@ -661,32 +643,32 @@ export class BattleService {
     const levelDifference = Math.abs(monsterLevel - equipmentMinLevel);
 
     if (levelDifference <= 2) {
-      return 0.3; // Same level range - reduced from 1.0
+      return 0.4; // Same level range - reduced from 0.6
     } else if (levelDifference <= 5) {
-      return 0.2; // Slightly different level - reduced from 0.7
+      return 0.25; // Slightly different level - reduced from 0.4
     } else if (levelDifference <= 10) {
-      return 0.1; // Different level range - reduced from 0.4
+      return 0.1; // Different level range - reduced from 0.2
     } else {
-      return 0.02; // Very different level range - reduced from 0.1
+      return 0.02; // Very different level range - reduced from 0.05
     }
   }
 
   private calculateRarityMultiplier(equipmentRarity: Rarity, monsterRank: string): number {
-    // Base multipliers for each rarity - significantly reduced
+    // Base multipliers for each rarity - reduced drop rates
     const rarityMultipliers = {
-      common: 0.3,
-      uncommon: 0.2,
-      rare: 0.15,
-      epic: 0.08,
-      legendary: 0.05,
+      common: 0.4,
+      uncommon: 0.3,
+      rare: 0.25,
+      epic: 0.15,
+      legendary: 0.1,
     };
 
-    // Rank-specific bonuses - significantly reduced
+    // Rank-specific bonuses - reduced drop rates
     const rankMultipliers = {
-      normal: { common: 0.4, uncommon: 0.3, rare: 0.1, epic: 0.02, legendary: 0.01 },
-      elite: { common: 0.2, uncommon: 0.15, rare: 0.4, epic: 0.08, legendary: 0.02 },
-      boss: { common: 0.15, uncommon: 0.1, rare: 0.25, epic: 0.3, legendary: 0.08 },
-      legendary: { common: 0.05, uncommon: 0.02, rare: 0.1, epic: 0.2, legendary: 0.4 },
+      normal: { common: 0.5, uncommon: 0.4, rare: 0.12, epic: 0.02, legendary: 0.005 },
+      elite: { common: 0.25, uncommon: 0.2, rare: 0.5, epic: 0.08, legendary: 0.02 },
+      boss: { common: 0.15, uncommon: 0.12, rare: 0.3, epic: 0.4, legendary: 0.08 },
+      legendary: { common: 0.04, uncommon: 0.02, rare: 0.12, epic: 0.25, legendary: 0.5 },
     };
 
     const baseMultiplier =

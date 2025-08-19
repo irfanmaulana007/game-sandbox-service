@@ -1078,6 +1078,229 @@
       ]
     },
     {
+      "name": "Transactions",
+      "description": "Equipment buying and selling transactions",
+      "item": [
+        {
+          "name": "Buy Equipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterId\": \"{{CHARACTER_ID}}\",\n  \"equipmentId\": 1,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/transactions/buy",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "buy"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}",
+                    "",
+                    "// Check if CHARACTER_ID is set",
+                    "const characterId = pm.environment.get('CHARACTER_ID');",
+                    "if (!characterId) {",
+                    "    console.warn('⚠️ CHARACTER_ID not set. Please create a character first.');",
+                    "} else {",
+                    "    console.log('✅ Using CHARACTER_ID for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Buy equipment for a character"
+        },
+        {
+          "name": "Sell Equipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"characterId\": \"{{CHARACTER_ID}}\",\n  \"equipmentId\": 1,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/transactions/sell",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "sell"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}",
+                    "",
+                    "// Check if CHARACTER_ID is set",
+                    "const characterId = pm.environment.get('CHARACTER_ID');",
+                    "if (!characterId) {",
+                    "    console.warn('⚠️ CHARACTER_ID not set. Please create a character first.');",
+                    "} else {",
+                    "    console.log('✅ Using CHARACTER_ID for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Sell equipment owned by a character"
+        },
+        {
+          "name": "Get Character Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/transactions/character/{{CHARACTER_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "character",
+                "{{CHARACTER_ID}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}",
+                    "",
+                    "// Check if CHARACTER_ID is set",
+                    "const characterId = pm.environment.get('CHARACTER_ID');",
+                    "if (!characterId) {",
+                    "    console.warn('⚠️ CHARACTER_ID not set. Please create a character first.');",
+                    "} else {",
+                    "    console.log('✅ Using CHARACTER_ID for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get all transactions for a character"
+        },
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/transactions/{{TRANSACTION_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "transactions",
+                "{{TRANSACTION_ID}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}",
+                    "",
+                    "// Check if TRANSACTION_ID is set",
+                    "const transactionId = pm.environment.get('TRANSACTION_ID');",
+                    "if (!transactionId) {",
+                    "    console.warn('⚠️ TRANSACTION_ID not set. Please perform a transaction first.');",
+                    "} else {",
+                    "    console.log('✅ Using TRANSACTION_ID for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get transaction details by ID"
+        }
+      ]
+    },
+    {
       "name": "Monsters",
       "description": "Monster information and filtering",
       "item": [

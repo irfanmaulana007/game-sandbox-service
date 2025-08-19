@@ -90,11 +90,11 @@ const RARITY_PRICE_MULTIPLIERS = {
 } as const;
 
 const BASE_DROP_RATES = {
-  common: 0.25,
-  uncommon: 0.12,
-  rare: 0.06,
-  epic: 0.025,
-  legendary: 0.008,
+  common: 0.3, // Reduced from 0.5 (1.67x decrease)
+  uncommon: 0.15, // Reduced from 0.25 (1.67x decrease)
+  rare: 0.08, // Reduced from 0.12 (1.5x decrease)
+  epic: 0.03, // Reduced from 0.05 (1.67x decrease)
+  legendary: 0.01, // Reduced from 0.015 (1.5x decrease)
 } as const;
 
 const TYPE_WEIGHTS = {

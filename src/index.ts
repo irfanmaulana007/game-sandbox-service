@@ -18,6 +18,7 @@ import jobClassesRoutes from './routes/jobClasses';
 import mapRoutes from './routes/maps';
 import mapZonesRoutes from './routes/mapZones';
 import monsterRoutes from './routes/monsters';
+import transactionRoutes from './routes/transactions';
 
 // Import database connection
 import { connectDatabase } from './database/prisma';
@@ -81,6 +82,7 @@ app.use('/api/maps', mapRoutes);
 app.use('/api/map-zones', mapZonesRoutes);
 app.use('/api/monsters', monsterRoutes);
 app.use('/api/battle', battleRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

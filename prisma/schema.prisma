@@ -70,6 +70,7 @@ model Character {
   inventory     CharacterInventory[]
   battleLogs    BattleLog[]
   equippedItems CharacterEquippedItem[]
+  transactions  Transaction[]
 
   @@unique([user_id, name])
   @@map("characters")
@@ -95,6 +96,7 @@ model Equipment {
   // Relations
   characterEquipment    CharacterEquipment[]
   CharacterEquippedItem CharacterEquippedItem[]
+  transactions          Transaction[]
 
   @@map("equipment")
 }
@@ -282,6 +284,23 @@ model ExperienceLevel {
   @@map("experience_levels")
 }
 
+model Transaction {
+  id           String          @id @default(cuid())
+  character_id String
+  equipment_id Int
+  type         TransactionType
+  quantity     Int             @default(1)
+  price        Int
+  total_amount Int
+  created_at   DateTime        @default(now())
+
+  // Relations
+  character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipment_id], references: [id])
+
+  @@map("transactions")
+}
+
 // Enums
 enum EquipmentType {
   weapon
@@ -314,4 +333,9 @@ enum MonsterRank {
 enum BattleResult {
   victory
   defeat
+}
+
+enum TransactionType {
+  buy
+  sell
 }
