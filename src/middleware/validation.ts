@@ -141,7 +141,7 @@ export const validateItemIdParam = [
   handleValidationErrors,
 ];
 
-// Equipment ID validation (for character equipment routes)
+// Character Equipment ID validation (for character equipment routes - uses CUID)
 export const validateEquipmentIdParam = [
   param('equipmentId').custom(value => {
     if (!isCUID(value)) {
@@ -150,5 +150,19 @@ export const validateEquipmentIdParam = [
 
     return true;
   }),
+  handleValidationErrors,
+];
+
+// Equipment ID validation (for actual equipment - uses integer)
+export const validateActualEquipmentIdParam = [
+  param('equipmentId').isInt({ min: 1 }).withMessage('Equipment ID must be a positive integer'),
+  handleValidationErrors,
+];
+
+// Slot validation (for character equipped item routes)
+export const validateSlotParam = [
+  param('slot')
+    .isIn(['weapon', 'armor', 'accessory_1', 'accessory_2'])
+    .withMessage('Slot must be one of: weapon, armor, accessory_1, accessory_2'),
   handleValidationErrors,
 ];

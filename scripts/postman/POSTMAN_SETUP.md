@@ -61,6 +61,11 @@ The collection includes **automatic token management**:
 - All endpoints are organized by category
 - Use the character ID from step 4 in other requests
 
+### 6. Test Equipment Management
+- Use "Character Equipment" endpoints for basic equipment management
+- Use "Character Equipped Items" endpoints for slot-based equipment system
+- Test equipping items to specific slots (weapon, armor, accessory_1, accessory_2)
+
 ## 🔧 Environment Variables
 
 | Variable | Description | Example |
@@ -75,6 +80,8 @@ Some requests use **dynamic variables** that you need to set:
 | Variable | Description | How to Set |
 |----------|-------------|-------------|
 | `{{character_id}}` | Character UUID | Copy from character creation response |
+| `{{equipment_id}}` | Equipment ID (integer) | Copy from equipment list or character equipment response |
+| `{{equipped_item_id}}` | CharacterEquippedItem UUID | Copy from equipped items response |
 | `{{battle_id}}` | Battle UUID | Copy from battle start response |
 
 ## 🎯 Tips for Testing

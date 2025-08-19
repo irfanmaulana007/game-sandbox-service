@@ -9,16 +9,9 @@ const characterEquipmentController = new CharacterEquipmentController();
 // Apply authentication middleware to all routes
 router.use(authenticateToken);
 
-// Get all equipment
-
 // Get character's equipment
 router.get('/:characterId', validateCharacterIdParam, (req: Request, res: Response) =>
   characterEquipmentController.getCharacterEquipment(req, res)
-);
-
-// Get all equipped equipment
-router.get('/:characterId/equipped', validateCharacterIdParam, (req: Request, res: Response) =>
-  characterEquipmentController.getEquippedEquipment(req, res)
 );
 
 // Equip an item

@@ -71,6 +71,13 @@ export class BattleService {
     // Simulate battle
     const battleResult = this.simulateBattle(character, selectedMonster, battleLogs);
 
+    // Subtract half of the monster's gold reward from the character's gold
+    let goldToSubtract = Math.floor(selectedMonster.gold_reward / 2);
+
+    if (goldToSubtract > character.gold) {
+      goldToSubtract = character.gold;
+    }
+
     // Create battle log
     const battleLog = await prisma.battleLog.create({
       data: {
@@ -81,7 +88,7 @@ export class BattleService {
         monster_health_remaining: battleResult.monsterHealthRemaining,
         turns_taken: battleResult.turnsTaken,
         experience_gained: battleResult.experienceGained,
-        gold_gained: battleResult.goldGained,
+        gold_gained: battleResult.result === 'victory' ? battleResult.goldGained : -goldToSubtract,
         battleLogDetails: {
           create: battleLogs.map(log => ({
             type: log.type,
@@ -134,13 +141,6 @@ export class BattleService {
         });
       }
     } else {
-      // Subtract half of the monster's gold reward from the character's gold
-      let goldToSubtract = Math.floor(selectedMonster.gold_reward / 2);
-
-      if (goldToSubtract > character.gold) {
-        goldToSubtract = character.gold;
-      }
-
       await prisma.character.update({
         where: { id: character_id },
         data: {
@@ -577,9 +577,17 @@ export class BattleService {
     // Calculate drop probability based on monster level and equipment rarity
     const equipmentWithProbabilities = availableEquipment.map(equipment => {
       const baseDropRate = Number(equipment.drop_rate);
+
+      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ baseDropRate:', baseDropRate);
       const levelMultiplier = this.calculateLevelMultiplier(monster.level, equipment.min_level);
+
+      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ levelMultiplier:', levelMultiplier);
       const rarityMultiplier = this.calculateRarityMultiplier(equipment.rarity, monster.rank);
+
+      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ rarityMultiplier:', rarityMultiplier);
       const finalDropRate = baseDropRate * levelMultiplier * rarityMultiplier;
+
+      console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ finalDropRate:', finalDropRate);
 
       return {
         equipment,
@@ -587,10 +595,10 @@ export class BattleService {
       };
     });
 
-    // Sort by drop rate (highest first) and normalize probabilities
+    // Sort by drop rate (highest first)
     equipmentWithProbabilities.sort((a, b) => b.dropRate - a.dropRate);
 
-    // Calculate total probability
+    // Calculate total probability and apply global reduction
     const totalProbability = equipmentWithProbabilities.reduce(
       (sum, item) => sum + item.dropRate,
       0
@@ -600,7 +608,27 @@ export class BattleService {
       return null;
     }
 
-    // Generate random number and select equipment
+    // Apply global drop rate reduction (make drops much rarer overall)
+    const globalDropRateReduction = 0.1; // 90% reduction
+
+    console.log(
+      '🚀 ~ BattleService ~ getEquipmentDrop ~ globalDropRateReduction:',
+      globalDropRateReduction
+    );
+    const adjustedTotalProbability = totalProbability * globalDropRateReduction;
+
+    console.log(
+      '🚀 ~ BattleService ~ getEquipmentDrop ~ adjustedTotalProbability:',
+      adjustedTotalProbability
+    );
+
+    console.log('🚀 ~ BattleService ~ getEquipmentDrop ~ Math.random():', Math.random());
+    // First, determine if ANY equipment drops at all
+    if (Math.random() > adjustedTotalProbability) {
+      return null; // No equipment drops
+    }
+
+    // If equipment does drop, select which one based on relative probabilities
     const random = Math.random() * totalProbability;
     let cumulativeProbability = 0;
 
@@ -633,40 +661,40 @@ export class BattleService {
     const levelDifference = Math.abs(monsterLevel - equipmentMinLevel);
 
     if (levelDifference <= 2) {
-      return 1.0; // Same level range
+      return 0.3; // Same level range - reduced from 1.0
     } else if (levelDifference <= 5) {
-      return 0.7; // Slightly different level
+      return 0.2; // Slightly different level - reduced from 0.7
     } else if (levelDifference <= 10) {
-      return 0.4; // Different level range
+      return 0.1; // Different level range - reduced from 0.4
     } else {
-      return 0.1; // Very different level range
+      return 0.02; // Very different level range - reduced from 0.1
     }
   }
 
   private calculateRarityMultiplier(equipmentRarity: Rarity, monsterRank: string): number {
-    // Base multipliers for each rarity
+    // Base multipliers for each rarity - significantly reduced
     const rarityMultipliers = {
-      common: 1.0,
-      uncommon: 0.8,
-      rare: 0.6,
-      epic: 0.4,
-      legendary: 0.2,
+      common: 0.3,
+      uncommon: 0.2,
+      rare: 0.15,
+      epic: 0.08,
+      legendary: 0.05,
     };
 
-    // Rank-specific bonuses
+    // Rank-specific bonuses - significantly reduced
     const rankMultipliers = {
-      normal: { common: 1.2, uncommon: 1.0, rare: 0.3, epic: 0.1, legendary: 0.05 },
-      elite: { common: 0.8, uncommon: 0.6, rare: 1.2, epic: 0.3, legendary: 0.1 },
-      boss: { common: 0.5, uncommon: 0.4, rare: 0.8, epic: 1.2, legendary: 0.3 },
-      legendary: { common: 0.2, uncommon: 0.1, rare: 0.4, epic: 0.8, legendary: 1.5 },
+      normal: { common: 0.4, uncommon: 0.3, rare: 0.1, epic: 0.02, legendary: 0.01 },
+      elite: { common: 0.2, uncommon: 0.15, rare: 0.4, epic: 0.08, legendary: 0.02 },
+      boss: { common: 0.15, uncommon: 0.1, rare: 0.25, epic: 0.3, legendary: 0.08 },
+      legendary: { common: 0.05, uncommon: 0.02, rare: 0.1, epic: 0.2, legendary: 0.4 },
     };
 
     const baseMultiplier =
-      rarityMultipliers[equipmentRarity as keyof typeof rarityMultipliers] || 1.0;
+      rarityMultipliers[equipmentRarity as keyof typeof rarityMultipliers] || 0.3;
     const rankMultiplier =
       rankMultipliers[monsterRank as keyof typeof rankMultipliers]?.[
         equipmentRarity as keyof typeof rarityMultipliers
-      ] || 1.0;
+      ] || 0.3;
 
     return baseMultiplier * rankMultiplier;
   }

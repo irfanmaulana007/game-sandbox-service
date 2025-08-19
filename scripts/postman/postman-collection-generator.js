@@ -794,6 +794,137 @@ const characterEquipmentEndpoints = [
   ),
 ];
 
+// Character Equipped Item endpoints (sorted: GET all, GET by slot, POST equip, DELETE unequip by ID, DELETE unequip by slot, PUT swap)
+const characterEquippedItemEndpoints = [
+  createRequest(
+    'Get All Equipped Items',
+    {
+      method: 'GET',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipped-items/{{character_id}}',
+        path: ['api', 'character-equipped-items', '{{character_id}}'],
+      },
+    },
+    'Get all equipped items for a character using the new slot-based system'
+  ),
+
+  createRequest(
+    'Get Equipped Item by Slot',
+    {
+      method: 'GET',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipped-items/{{character_id}}/slot/weapon',
+        path: ['api', 'character-equipped-items', '{{character_id}}', 'slot', 'weapon'],
+      },
+    },
+    'Get equipped item in a specific slot (weapon, armor, accessory_1, accessory_2)'
+  ),
+
+  createRequest(
+    'Equip Item to Slot',
+    {
+      method: 'POST',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipped-items/{{character_id}}/equip/{{equipment_id}}/weapon',
+        path: [
+          'api',
+          'character-equipped-items',
+          '{{character_id}}',
+          'equip',
+          '{{equipment_id}}',
+          'weapon',
+        ],
+      },
+    },
+    'Equip an item from inventory to a specific slot (weapon, armor, accessory_1, accessory_2)'
+  ),
+
+  createRequest(
+    'Unequip Item by ID',
+    {
+      method: 'DELETE',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipped-items/{{character_id}}/unequip/{{equipped_item_id}}',
+        path: [
+          'api',
+          'character-equipped-items',
+          '{{character_id}}',
+          'unequip',
+          '{{equipped_item_id}}',
+        ],
+      },
+    },
+    'Unequip an item using its equipped item ID'
+  ),
+
+  createRequest(
+    'Unequip Item by Slot',
+    {
+      method: 'DELETE',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipped-items/{{character_id}}/unequip-slot/weapon',
+        path: ['api', 'character-equipped-items', '{{character_id}}', 'unequip-slot', 'weapon'],
+      },
+    },
+    'Unequip an item from a specific slot (weapon, armor, accessory_1, accessory_2)'
+  ),
+
+  createRequest(
+    'Swap Equipment',
+    {
+      method: 'PUT',
+      header: [
+        {
+          key: 'Authorization',
+          value: 'Bearer {{AUTH_TOKEN}}',
+        },
+      ],
+      url: {
+        raw: '/api/character-equipped-items/{{character_id}}/swap/{{equipment_id}}/weapon',
+        path: [
+          'api',
+          'character-equipped-items',
+          '{{character_id}}',
+          'swap',
+          '{{equipment_id}}',
+          'weapon',
+        ],
+      },
+    },
+    'Swap equipment in a slot - unequips existing item and equips new one'
+  ),
+];
+
 // Inventory endpoints (sorted: GET, POST, PUT, DELETE)
 const inventoryEndpoints = [
   createRequest(
@@ -1068,6 +1199,11 @@ collection.item = [
     'Character equipment management and equipping/unequipping items',
     characterEquipmentEndpoints
   ),
+  createFolder(
+    'Character Equipped Items',
+    'Slot-based equipped item management using CharacterEquippedItem table',
+    characterEquippedItemEndpoints
+  ),
   createFolder('Equipment', 'Equipment browsing and information', equipmentEndpoints),
   createFolder('Monsters', 'Monster information and filtering', monsterEndpoints),
   createFolder('Maps', 'Game maps and area information', mapEndpoints),
@@ -1214,6 +1350,11 @@ The collection includes **automatic token management**:
 - All endpoints are organized by category
 - Use the character ID from step 4 in other requests
 
+### 6. Test Equipment Management
+- Use "Character Equipment" endpoints for basic equipment management
+- Use "Character Equipped Items" endpoints for slot-based equipment system
+- Test equipping items to specific slots (weapon, armor, accessory_1, accessory_2)
+
 ## 🔧 Environment Variables
 
 | Variable | Description | Example |
@@ -1228,6 +1369,8 @@ Some requests use **dynamic variables** that you need to set:
 | Variable | Description | How to Set |
 |----------|-------------|-------------|
 | \`{{character_id}}\` | Character UUID | Copy from character creation response |
+| \`{{equipment_id}}\` | Equipment ID (integer) | Copy from equipment list or character equipment response |
+| \`{{equipped_item_id}}\` | CharacterEquippedItem UUID | Copy from equipped items response |
 | \`{{battle_id}}\` | Battle UUID | Copy from battle start response |
 
 ## 🎯 Tips for Testing

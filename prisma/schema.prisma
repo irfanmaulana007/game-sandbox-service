@@ -64,11 +64,12 @@ model Character {
   updated_at    DateTime @updatedAt
 
   // Relations
-  user       User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  job        JobClass             @relation(fields: [job_id], references: [id])
-  equipment  CharacterEquipment[]
-  inventory  CharacterInventory[]
-  battleLogs BattleLog[]
+  user          User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  job           JobClass                @relation(fields: [job_id], references: [id])
+  equipment     CharacterEquipment[]
+  inventory     CharacterInventory[]
+  battleLogs    BattleLog[]
+  equippedItems CharacterEquippedItem[]
 
   @@unique([user_id, name])
   @@map("characters")
@@ -92,7 +93,8 @@ model Equipment {
   created_at     DateTime      @default(now())
 
   // Relations
-  characterEquipment CharacterEquipment[]
+  characterEquipment    CharacterEquipment[]
+  CharacterEquippedItem CharacterEquippedItem[]
 
   @@map("equipment")
 }
@@ -104,10 +106,34 @@ model CharacterEquipment {
   equipped     Boolean @default(false)
 
   // Relations
-  character Character @relation(fields: [character_id], references: [id], onDelete: Cascade)
-  equipment Equipment @relation(fields: [equipment_id], references: [id])
+  character             Character               @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  equipment             Equipment               @relation(fields: [equipment_id], references: [id])
+  characterEquippedItem CharacterEquippedItem[]
 
   @@map("character_equipment")
+}
+
+enum EquipmentSlot {
+  weapon
+  armor
+  accessory_1
+  accessory_2
+}
+
+model CharacterEquippedItem {
+  id           String        @id @default(cuid())
+  equipment_id Int
+  character_id String
+  slot         EquipmentSlot
+  created_at   DateTime      @default(now())
+
+  // Relations
+  equipment            Equipment           @relation(fields: [equipment_id], references: [id])
+  character            Character           @relation(fields: [character_id], references: [id], onDelete: Cascade)
+  CharacterEquipment   CharacterEquipment? @relation(fields: [characterEquipmentId], references: [id])
+  characterEquipmentId String?
+
+  @@map("character_equipped_items")
 }
 
 model Item {

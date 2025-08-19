@@ -9,6 +9,7 @@ import morgan from 'morgan';
 import authRoutes from './routes/auth';
 import battleRoutes from './routes/battle';
 import characterEquipmentRoutes from './routes/characterEquipment';
+import characterEquippedItemRoutes from './routes/characterEquippedItem';
 import characterRoutes from './routes/characters';
 import equipmentRoutes from './routes/equipment';
 import experienceRoutes from './routes/experience';
@@ -71,6 +72,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
 app.use('/api/character-equipment', characterEquipmentRoutes);
+app.use('/api/character-equipped-items', characterEquippedItemRoutes);
 app.use('/api/equipment', equipmentRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/inventory', inventoryRoutes);

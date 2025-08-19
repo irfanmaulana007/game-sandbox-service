@@ -103,6 +103,15 @@ export interface CharacterEquipment {
   equipment?: Equipment;
 }
 
+export interface CharacterEquippedItem {
+  id: string;
+  equipment_id: number;
+  character_id: string;
+  slot: 'weapon' | 'armor' | 'accessory_1' | 'accessory_2';
+  created_at: Date;
+  equipment?: Equipment;
+}
+
 // Item types
 export interface Item {
   id: number;

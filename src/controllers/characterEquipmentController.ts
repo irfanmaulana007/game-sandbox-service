@@ -29,29 +29,6 @@ export class CharacterEquipmentController {
     }
   }
 
-  async getEquippedEquipment(req: AuthenticatedRequest, res: Response) {
-    try {
-      const { characterId } = req.params;
-      const userId = req.user?.userId;
-
-      if (!userId) {
-        return sendError(res, 'Unauthorized', 401);
-      }
-
-      const equippedEquipment = await characterEquipmentService.getEquippedEquipment(
-        characterId,
-        userId
-      );
-
-      return sendSuccess(res, equippedEquipment, 'Equipped equipment retrieved successfully');
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to get equipped equipment';
-
-      return sendError(res, errorMessage, 400);
-    }
-  }
-
   async equipItem(req: AuthenticatedRequest, res: Response) {
     try {
       const { characterId, equipmentId } = req.params;

@@ -27,33 +27,6 @@ export class CharacterEquipmentService {
     return characterEquipment;
   }
 
-  async getEquippedEquipment(characterId: string, userId: string) {
-    // Verify character belongs to user
-    const character = await prisma.character.findFirst({
-      where: {
-        id: characterId,
-        user_id: userId,
-      },
-    });
-
-    if (!character) {
-      throw new Error('Character not found');
-    }
-
-    const equippedEquipment = await prisma.characterEquipment.findMany({
-      where: {
-        character_id: characterId,
-        equipped: true,
-      },
-    });
-
-    if (!equippedEquipment) {
-      throw new Error('No equipped equipment found');
-    }
-
-    return equippedEquipment;
-  }
-
   async equipItem(characterId: string, equipmentId: string, userId: string) {
     // Verify character belongs to user
     const character = await prisma.character.findFirst({

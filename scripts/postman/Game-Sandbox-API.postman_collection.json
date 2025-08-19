@@ -765,6 +765,276 @@
       ]
     },
     {
+      "name": "Character Equipped Items",
+      "description": "Slot-based equipped item management using CharacterEquippedItem table",
+      "item": [
+        {
+          "name": "Get All Equipped Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/character-equipped-items/{{character_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "character-equipped-items",
+                "{{character_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get all equipped items for a character using the new slot-based system"
+        },
+        {
+          "name": "Get Equipped Item by Slot",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/character-equipped-items/{{character_id}}/slot/weapon",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "character-equipped-items",
+                "{{character_id}}",
+                "slot",
+                "weapon"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Get equipped item in a specific slot (weapon, armor, accessory_1, accessory_2)"
+        },
+        {
+          "name": "Equip Item to Slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/character-equipped-items/{{character_id}}/equip/{{equipment_id}}/weapon",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "character-equipped-items",
+                "{{character_id}}",
+                "equip",
+                "{{equipment_id}}",
+                "weapon"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Equip an item from inventory to a specific slot (weapon, armor, accessory_1, accessory_2)"
+        },
+        {
+          "name": "Unequip Item by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/character-equipped-items/{{character_id}}/unequip/{{equipped_item_id}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "character-equipped-items",
+                "{{character_id}}",
+                "unequip",
+                "{{equipped_item_id}}"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Unequip an item using its equipped item ID"
+        },
+        {
+          "name": "Unequip Item by Slot",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/character-equipped-items/{{character_id}}/unequip-slot/weapon",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "character-equipped-items",
+                "{{character_id}}",
+                "unequip-slot",
+                "weapon"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Unequip an item from a specific slot (weapon, armor, accessory_1, accessory_2)"
+        },
+        {
+          "name": "Swap Equipment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{AUTH_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/character-equipped-items/{{character_id}}/swap/{{equipment_id}}/weapon",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "character-equipped-items",
+                "{{character_id}}",
+                "swap",
+                "{{equipment_id}}",
+                "weapon"
+              ]
+            },
+            "event": [
+              {
+                "listen": "prerequest",
+                "script": {
+                  "exec": [
+                    "// Check if AUTH_TOKEN is set",
+                    "const token = pm.environment.get('AUTH_TOKEN');",
+                    "if (!token) {",
+                    "    console.warn('⚠️ AUTH_TOKEN not set. Please login first.');",
+                    "} else {",
+                    "    console.log('✅ Using AUTH_TOKEN for request');",
+                    "}"
+                  ],
+                  "type": "text/javascript"
+                }
+              }
+            ]
+          },
+          "response": [],
+          "description": "Swap equipment in a slot - unequips existing item and equips new one"
+        }
+      ]
+    },
+    {
       "name": "Equipment",
       "description": "Equipment browsing and information",
       "item": [
